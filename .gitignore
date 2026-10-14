@@ -1,0 +1,11 @@
+# Downloaded price cache (re-created automatically, too big for GitHub)
+cache/
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Editor
+.idea/
+nul

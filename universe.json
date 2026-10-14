@@ -1,0 +1,9 @@
+{
+  "_how_to_use": "Any key left empty is ignored. Matching is not case-sensitive. Run 'python backend/run.py --list' to see every GICS sector and sub-industry name.",
+
+  "gics_sectors": [],
+  "gics_sub_industries": [],
+
+  "include_tickers": [],
+  "exclude_tickers": []
+}

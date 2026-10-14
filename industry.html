@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en" data-mode="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Industry · Information Technology · Trendably</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Light mode (default) */
+    --bg: #FFFFFF;
+    --panel: #F4F9FE;
+    --panel2: #EAF3FC;
+    --border: #C9DCF2;
+    --border-soft: #DCE9F8;
+    --text1: #0B1C33;
+    --text2: #33547A;
+    --text3: #5A7699;
+    --text4: #8CA0BC;
+    --blue: #1C6FE0;
+    --cyan: #0EA5C4;
+    --green: #0E9F6E;
+    --red: #D23A58;
+    --amber: #D98A12;
+    --head-grad: linear-gradient(180deg, rgba(28,111,224,0.92) 0%, rgba(14,165,196,0.5) 65%, rgba(255,255,255,0) 100%);
+    --head-text: #FFFFFF;
+    --nav-grad: linear-gradient(180deg, rgba(28,111,224,0.45) 0%, rgba(14,165,196,0.16) 65%, rgba(255,255,255,0.02) 100%);
+    --accent-soft: rgba(28,111,224,0.07);
+    --shadow: 0 12px 28px rgba(11,28,51,0.12);
+    --strip-bg: #F4F9FE;
+    --sky: #6FA8E8;
+    color-scheme: light;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  :root[data-mode="dark"] {
+    --bg: #05080E;
+    --panel: #0D1420;
+    --panel2: #121A27;
+    --border: #2A3850;
+    --border-soft: #1C2636;
+    --text1: #F3F6FB;
+    --text2: #B7C0D1;
+    --text3: #8593A8;
+    --text4: #5B6472;
+    --blue: #2F8CFF;
+    --cyan: #21D4F0;
+    --green: #2EE6A6;
+    --red: #FF5577;
+    --amber: #FFB23D;
+    --head-grad: linear-gradient(180deg, rgba(47,140,255,0.30) 0%, rgba(33,212,240,0.10) 70%, rgba(13,20,32,0) 100%);
+    --head-text: #EAF2FF;
+    --nav-grad: linear-gradient(180deg, rgba(47,140,255,0.16) 0%, rgba(33,212,240,0.05) 65%, rgba(5,8,14,0) 100%);
+    --accent-soft: rgba(47,140,255,0.12);
+    --shadow: 0 16px 34px rgba(0,0,0,0.5);
+    --strip-bg: #0A111C;
+    --sky: #8FC0FF;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0; background: var(--bg); color: var(--text1);
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 0 18px 72px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 20px; margin-bottom: 16px;
+  }
+  h1, h2, h3 { font-family: 'Sora', sans-serif; margin: 0; letter-spacing: -0.02em; }
+  .caveat { font-size: 12px; color: var(--text4); line-height: 1.5; }
+  button { font-family: inherit; cursor: pointer; }
+  a { color: inherit; }
+  .hint-link {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--blue);
+    text-decoration: none; background: none; border: none; padding: 0; font-family: inherit;
+  }
+  .hint-link svg { flex: none; }
+  .hint-row {
+    display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 18px; padding: 12px 14px;
+    background: var(--accent-soft); border: 1px solid var(--border); border-radius: 10px;
+  }
+
+  /* ---------- Nav ---------- */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 18px; border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; top: env(safe-area-inset-top, 0px);
+    background: var(--nav-grad);
+    backdrop-filter: blur(10px); z-index: 20;
+  }
+  .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+  .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px rgba(14,165,196,0.5); }
+  .back { font-size: 13px; color: var(--text3); text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .brand .logo { width: 28px; height: 28px; flex: none; }
+  .word { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: -0.02em; color: var(--text1); }
+  .word span { background: linear-gradient(90deg, var(--blue), var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .page-tag { font-size: 12.5px; color: var(--text3); padding-left: 10px; margin-left: 2px; border-left: 1px solid var(--border); }
+  .nav-actions { display: flex; align-items: center; gap: 8px; }
+  .t-sun { display: none; }
+  :root[data-mode="dark"] .t-sun { display: block; }
+  :root[data-mode="dark"] .t-moon { display: none; }
+
+
+  .menu-btn {
+    width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--border-soft); background: none;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text2); flex: none;
+  }
+  .menu-btn svg { width: 16px; height: 16px; }
+
+  .nav-drawer {
+    position: fixed; inset: 0; z-index: 50; visibility: hidden;
+  }
+  .nav-drawer.open { visibility: visible; }
+  .nav-drawer .scrim {
+    position: absolute; inset: 0; background: rgba(5,8,14,0.45);
+    opacity: 0; transition: opacity 0.2s ease;
+  }
+  .nav-drawer.open .scrim { opacity: 1; }
+  .nav-drawer .panel {
+    position: absolute; top: 0; right: 0; bottom: 0; width: 78%; max-width: 300px;
+    background: var(--panel); border-left: 1px solid var(--border-soft);
+    padding: 20px 18px; transform: translateX(100%); transition: transform 0.25s ease;
+    box-shadow: var(--shadow);
+  }
+  .nav-drawer.open .panel { transform: translateX(0); }
+  .nav-drawer .panel h3 { font-family: 'Sora', sans-serif; font-size: 13px; color: var(--text3); font-weight: 600; margin: 0 0 14px; }
+  .nav-drawer .panel a {
+    display: flex; align-items: center; gap: 10px; padding: 11px 10px; border-radius: 9px;
+    color: var(--text1); text-decoration: none; font-size: 14px; font-weight: 500; margin-bottom: 2px;
+  }
+  .nav-drawer .panel a.current { background: var(--accent-soft); color: var(--blue); font-weight: 600; }
+  .nav-drawer .panel a .pg-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex: none; }
+  .nav-drawer .panel a.current .pg-dot { background: var(--blue); }
+
+  .page-head { text-align: center; padding: 26px 20px 6px; }
+  .page-head h1 { font-size: 22px; font-weight: 600; max-width: 22ch; margin: 0 auto; }
+  .page-head p { font-size: 14px; color: var(--text2); max-width: 440px; margin: 10px auto 0; line-height: 1.55; }
+
+  .section-head {
+    display: flex; align-items: baseline; justify-content: space-between; margin: -20px -20px 16px; padding: 15px 20px;
+    border-radius: 15px 15px 0 0;
+    background: var(--head-grad);
+  }
+  .section-head h2 { font-size: 17px; font-weight: 600; color: var(--head-text); }
+  .section-sub { font-size: 12.5px; color: var(--text3); margin: 4px 0 16px; line-height: 1.5; }
+
+  /* ---------- Shared header: market strip + pick-a-stock search ---------- */
+  .mkt-strip {
+    display: flex; gap: 20px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    padding: 9px 18px; background: var(--strip-bg); border-bottom: 1px solid var(--border-soft);
+    font-size: 12px; color: var(--text3); white-space: nowrap; scrollbar-width: none;
+  }
+  .mkt-strip::-webkit-scrollbar { display: none; }
+  .mkt-strip b { font-weight: 600; }
+  .mkt-strip .pos { color: var(--green); } .mkt-strip .neg { color: var(--red); }
+  .pick-stock-bar {
+    display: flex; align-items: center; gap: 9px; padding: 12px 18px;
+    background: var(--panel2); border-bottom: 1px solid var(--border);
+  }
+  .pick-stock-bar svg { flex: none; color: var(--text4); }
+  .pick-stock-bar input {
+    flex: 1; background: none; border: none; outline: none; color: var(--text1);
+    font-size: 13.5px; font-family: inherit;
+  }
+  .pick-stock-bar input::placeholder { color: var(--text4); }
+
+  
+  .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font-size: 12.5px; color: var(--text3); padding: 18px 2px 0; }
+  .crumbs a { color: var(--blue); text-decoration: none; }
+  .crumbs > * { white-space: nowrap; }
+  .mover-top a.tk { border-bottom: none; }
+  .sec-head { text-align: center; padding: 14px 20px 20px; }
+  .sec-head h1 { font-size: 23px; font-weight: 600; }
+  .sec-move { font-family: 'Sora', sans-serif; font-size: 34px; font-weight: 700; margin-top: 8px; letter-spacing: -0.02em; }
+  .sec-move.up { color: var(--green); } .sec-move.down { color: var(--red); }
+  .sec-period { font-size: 12.5px; color: var(--text3); margin-top: 2px; }
+  .stat-row { display: flex; justify-content: center; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+  .stat { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; min-width: 120px; }
+  .stat b { display: block; font-family: 'Sora', sans-serif; font-size: 16px; }
+  .stat span { font-size: 11.5px; color: var(--text3); }
+  .tf-wrap { display: flex; justify-content: center; margin: 4px 0 18px; }
+  .tf-group { display: flex; gap: 4px; background: var(--panel2); border: 1px solid var(--border-soft); border-radius: 10px; padding: 3px; }
+  .tf-btn { border: none; background: transparent; color: var(--text3); font-size: 12.5px; font-weight: 500; padding: 7px 13px; border-radius: 7px; }
+  .tf-btn.active { background: var(--blue); color: #fff; }
+
+  .summary { font-size: 14px; line-height: 1.65; color: var(--text2); margin: 0; }
+  .summary b { color: var(--text1); font-weight: 600; }
+
+  .ll-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 14px; }
+  .ll-col { min-width: 0; }
+  .ll-col h3 { font-family: 'Inter Tight', sans-serif; font-size: 13px; font-weight: 600; margin: 0 0 8px; display: flex; align-items: center; gap: 6px; }
+  .ll-col.up h3 { color: var(--green); } .ll-col.down h3 { color: var(--red); }
+  .mover { background: var(--panel2); border: 1px solid var(--border-soft); border-radius: 11px; margin-bottom: 8px; overflow: hidden; }
+  .mover-top { display: flex; align-items: center; gap: 10px; width: 100%; padding: 10px 12px; background: none; border: none; color: var(--text1); text-align: left; }
+  .mover-top .tk { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 13.5px; width: 52px; flex: none; }
+  .mover-top .nm { flex: 1; font-size: 12px; color: var(--text3); min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mover-top .chg { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 13.5px; }
+  .chg.up { color: var(--green); } .chg.down { color: var(--red); }
+  .mover-top .chev { flex: none; color: var(--text4); transition: transform .2s; }
+  .mover.open .chev { transform: rotate(180deg); }
+  .mover-body { display: none; padding: 0 12px 12px; font-size: 12.5px; line-height: 1.55; color: var(--text3); }
+  .mover.open .mover-body { display: block; }
+  .mover-body .contrib { color: var(--text2); margin-bottom: 6px; }
+  .mover-body .news { margin-top: 8px; padding: 8px 10px; border-radius: 8px; background: var(--accent-soft); border: 1px dashed var(--border); font-size: 12px; }
+  .mover-body a { color: var(--blue); text-decoration: none; display: inline-block; margin-top: 8px; font-weight: 500; }
+
+  .sub { border: 1px solid var(--border-soft); border-radius: 12px; background: var(--panel2); margin-bottom: 10px; overflow: hidden; }
+  .sub-head { display: flex; align-items: center; gap: 12px; width: 100%; padding: 13px 14px; background: none; border: none; color: var(--text1); text-align: left; }
+  .sub-head .sn { flex: 1; min-width: 0; }
+  .sub-head .sn b { display: block; font-size: 13.5px; font-weight: 600; }
+  .sub-head .sn span { font-size: 11.5px; color: var(--text3); }
+  .contrib-bar { width: 70px; height: 6px; border-radius: 4px; background: var(--border-soft); position: relative; flex: none; }
+  .contrib-bar i { position: absolute; top: 0; bottom: 0; border-radius: 4px; }
+  .sub-head .chg { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14px; width: 62px; text-align: right; flex: none; }
+  .sub-head .chev { flex: none; color: var(--text4); transition: transform .2s; }
+  .sub.open .sub-head .chev { transform: rotate(180deg); }
+  .sub-body { display: none; padding: 4px 14px 14px; border-top: 1px solid var(--border-soft); }
+  .sub.open .sub-body { display: block; }
+  .sub-body .summary { font-size: 13px; margin: 12px 0 14px; }
+  .tklink { color: var(--blue); text-decoration: none; font-weight: 600; border-bottom: 1px solid color-mix(in srgb, var(--blue) 35%, transparent); }
+  .summary .tklink { font-weight: 700; }
+  .sub-more { display: inline-block; margin-top: 6px; font-size: 13px; font-weight: 600; color: var(--blue); text-decoration: none; }
+  .driver-tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 100px; margin-left: 6px;
+    background: color-mix(in srgb, var(--cyan) 15%, transparent); color: var(--cyan); vertical-align: middle; }
+  .legend { font-size: 11.5px; color: var(--text4); margin: -6px 0 12px; }
+
+  @media (max-width: 560px) {
+    .ll-grid { grid-template-columns: minmax(0,1fr); }
+    .stat { min-width: 0; flex: 1; padding: 9px 8px; }
+    .stat-row { flex-wrap: nowrap; gap: 8px; }
+    .sub-body { padding: 4px 10px 12px; }
+    .mover-top { gap: 8px; padding: 10px; }
+    .mover-top .tk { width: 46px; }
+    .contrib-bar { display: none; }
+  }
+
+  .ind-full { font-size: 12.5px; color: var(--text3); margin-top: 3px; }
+  .vs-sector { font-size: 12.5px; color: var(--text3); margin-top: 6px; }
+  .all-row { display: grid; grid-template-columns: 58px minmax(0,1fr) 70px 64px; align-items: center; gap: 10px; padding: 11px 4px; border-bottom: 1px solid var(--border-soft); text-decoration: none; color: var(--text1); }
+  .all-row:last-child { border-bottom: none; }
+  .all-row .tk { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 13.5px; color: var(--blue); }
+  .all-row .nm { font-size: 12.5px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .all-row .nm small { display: block; font-size: 11px; color: var(--text4); }
+  .all-row .chg { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 13.5px; text-align: right; }
+  .all-head { display: grid; grid-template-columns: 58px minmax(0,1fr) 70px 64px; gap: 10px; padding: 0 4px 6px; font-size: 11px; color: var(--text4); border-bottom: 1px solid var(--border-soft); }
+  .all-head span:last-child, .all-head span:nth-child(3) { text-align: right; }
+  .all-head span:nth-child(3) { text-align: left; }
+  .sib-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sib { display: flex; gap: 8px; align-items: center; padding: 8px 12px; border: 1px solid var(--border); border-radius: 100px; background: var(--panel2); font-size: 12.5px; color: var(--text1); text-decoration: none; }
+  .sib b { font-family: 'Sora', sans-serif; font-size: 12px; }
+  @media (max-width: 560px) { .all-row, .all-head { grid-template-columns: 50px minmax(0,1fr) 64px; } .all-row .contrib-bar, .all-head span:nth-child(3) { display: none; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="index.html" aria-label="Trendably home">
+    <svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="mk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0E1A3D"/><stop offset=".6" stop-color="#1D5FD0"/><stop offset="1" stop-color="#2F8CFF"/></linearGradient></defs><rect width="40" height="40" rx="11" fill="url(#mk)"/><rect x="8" y="26" width="3.4" height="8" rx="1" fill="#8FC0FF"/><rect x="14" y="21" width="3.4" height="13" rx="1" fill="#8FC0FF"/><rect x="20" y="24" width="3.4" height="10" rx="1" fill="#8FC0FF"/><rect x="26" y="15" width="3.4" height="19" rx="1" fill="#8FC0FF"/><path d="M6 27L15 19L21 24L34 9" stroke="#21D4F0" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="word">trend<span>ably</span></span>
+    <span class="page-tag">Industries</span>
+  </a>
+  <div class="nav-actions">
+    <button class="menu-btn" id="themeBtn" type="button" aria-label="Switch light or dark">
+      <svg class="t-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      <svg class="t-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
+    </button>
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Open navigation">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="nav-drawer" id="navDrawer">
+  <div class="scrim" id="navScrim"></div>
+  <div class="panel">
+    <h3>Trendably</h3>
+    <a href="index.html"><span class="pg-dot"></span>Home</a>
+    <a href="market-weather.html"><span class="pg-dot"></span>Market Weather</a>
+    <a href="the-grid.html"><span class="pg-dot"></span>The Grid</a>
+    <a href="stock-detail.html"><span class="pg-dot"></span>Stock Detail</a>
+    <a href="strategy-lab.html"><span class="pg-dot"></span>Strategy Lab</a>
+    <a href="study-room.html"><span class="pg-dot"></span>Study Room</a>
+  </div>
+</div>
+
+<div class="mkt-strip">
+  <span>S&amp;P 500 <b class="pos">+0.8%</b></span>
+  <span>NASDAQ <b class="pos">+1.1%</b></span>
+  <span>VIX <b class="pos">14.8</b></span>
+  <span>NVDA <b class="pos">+2.4%</b></span>
+  <span>10Y Yield <b>4.18%</b></span>
+</div>
+<div class="pick-stock-bar">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+  <input type="text" placeholder="Jump straight to a stock's profile — search any ticker">
+</div>
+
+<div class="wrap">
+  <div class="crumbs"><a href="market-weather.html">Market Weather</a><span>›</span><a href="sector-technology.html">Information Technology</a><span>›</span><span id="crumbInd"></span></div>
+
+  <section class="sec-head">
+    <h1 id="indName"></h1>
+    <div class="ind-full" id="indFull"></div>
+    <div class="sec-move" id="secMove">—</div>
+    <div class="sec-period" id="secPeriod"></div>
+    <div class="vs-sector" id="vsSector"></div>
+    <div class="stat-row">
+      <div class="stat"><b id="wSector">—</b><span>of the sector</span></div>
+      <div class="stat"><b id="breadth">—</b><span>stocks rising</span></div>
+      <div class="stat"><b id="wSpx">—</b><span>of the S&amp;P 500</span></div>
+    </div>
+  </section>
+
+  <div class="tf-wrap">
+    <div class="tf-group" id="tfGroup">
+      <button class="tf-btn" data-tf="1D">1D</button>
+      <button class="tf-btn" data-tf="1W">1W</button>
+      <button class="tf-btn active" data-tf="1M">1M</button>
+      <button class="tf-btn" data-tf="6M">6M</button>
+      <button class="tf-btn" data-tf="1Y">1Y</button>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="section-head"><h2>What moved the industry</h2></div>
+    <p class="summary" id="secSummary"></p>
+  </section>
+
+  <section class="card">
+    <div class="section-head"><h2>Leaders and laggards</h2></div>
+    <p class="section-sub">Ranked by how much each stock pushed the industry — its move weighted by its size. Tap a ticker to open its profile, or the row for the why.</p>
+    <div class="ll-grid" id="secLL"></div>
+  </section>
+
+  <section class="card">
+    <div class="section-head"><h2>Every stock in this industry</h2></div>
+    <p class="section-sub">Ranked by contribution to the industry's move. Tap any stock for its full profile.</p>
+    <div class="all-head"><span>Stock</span><span>Company · weight</span><span>Share of move</span><span>Move</span></div>
+    <div id="allList"></div>
+  </section>
+
+  <section class="card">
+    <div class="section-head"><h2>Other industries in Information Technology</h2></div>
+    <div class="sib-row" id="sibs"></div>
+  </section>
+
+  <p class="caveat" style="text-align:center; margin-top: 4px;">Real companies and industry structure; price moves are sample figures until the data feed is connected. Weights are approximate.</p>
+</div>
+<script>
+(function(){
+  var root=document.documentElement;
+  try{ var s=localStorage.getItem('tb-mode'); if(s) root.setAttribute('data-mode',s);}catch(e){}
+  document.getElementById('themeBtn').addEventListener('click',function(){
+    var d=root.getAttribute('data-mode')==='dark'; root.setAttribute('data-mode',d?'light':'dark');
+    try{localStorage.setItem('tb-mode',d?'light':'dark');}catch(e){}
+  });
+  var nd=document.getElementById('navDrawer');
+  document.getElementById('menuBtn').addEventListener('click',function(){nd.classList.add('open');});
+  document.getElementById('navScrim').addEventListener('click',function(){nd.classList.remove('open');});
+
+  // GICS industries in Information Technology, real constituents, approximate weight within the sector (%)
+  // why = what typically drives the stock (not a dated news claim)
+  var IND=[
+   {name:"Semiconductors & Semiconductor Equipment", slug:"semiconductors", short:"Semiconductors", stocks:[
+     ["NVDA","Nvidia",22,"AI data-centre demand and visibility on orders for its accelerators."],
+     ["AVGO","Broadcom",8,"Custom AI chips for hyperscalers, networking silicon, and its VMware software arm."],
+     ["AMD","Advanced Micro Devices",2,"Progress of its Instinct AI accelerators against Nvidia, plus PC and server CPU share."],
+     ["MU","Micron Technology",1.3,"Memory pricing — especially high-bandwidth memory used in AI servers."],
+     ["QCOM","Qualcomm",1.1,"Smartphone demand and its push into PC and auto chips."],
+     ["AMAT","Applied Materials",1.1,"Chipmakers' spending on new fabs and equipment, and export rules on China."],
+     ["INTC","Intel",0.9,"Turnaround progress in its foundry business and market share in PC chips."],
+     ["TXN","Texas Instruments",1,"Industrial and auto demand for analog chips — an early read on the economic cycle."],
+     ["LRCX","Lam Research",1,"Memory and logic chipmakers' equipment orders, and China export rules."],
+     ["KLAC","KLA",0.9,"Spending on chip inspection tools as manufacturing gets more complex."],
+     ["ADI","Analog Devices",0.9,"Industrial, auto and communications demand for analog and mixed-signal chips."],
+     ["MRVL","Marvell Technology",0.5,"Custom AI and data-centre networking chips; swings with hyperscaler orders."],
+     ["NXPI","NXP Semiconductors",0.4,"Auto and industrial chip demand, especially in Europe and China."],
+     ["MCHP","Microchip Technology",0.3,"Microcontroller demand and inventory cycles at industrial customers."]]},
+   {name:"Software", slug:"software", short:"Software", stocks:[
+     ["MSFT","Microsoft",16,"Azure cloud growth and how fast AI features like Copilot turn into revenue."],
+     ["ORCL","Oracle",3,"Cloud infrastructure contracts for AI workloads and its order backlog."],
+     ["PLTR","Palantir",2,"Government and commercial AI platform adoption; very sensitive to growth expectations."],
+     ["CRM","Salesforce",1.3,"Enterprise software budgets and uptake of its AI agent products."],
+     ["NOW","ServiceNow",1,"Large-company workflow automation spending and subscription growth."],
+     ["ADBE","Adobe",0.9,"Whether generative AI tools grow or erode demand for its creative software."],
+     ["INTU","Intuit",1,"Tax season results, small-business health, and its AI assistant rollout."]]},
+   {name:"Technology Hardware, Storage & Peripherals", slug:"hardware", short:"Hardware", stocks:[
+     ["AAPL","Apple",17,"iPhone upgrade cycle, services growth, China demand, and supply-chain costs."],
+     ["DELL","Dell Technologies",0.5,"Orders for AI servers and the PC refresh cycle."],
+     ["SMCI","Super Micro Computer",0.2,"AI server shipments and margins; historically very volatile."],
+     ["HPQ","HP Inc.",0.2,"PC and printer demand; moves with consumer and corporate spending."]]},
+   {name:"Communications Equipment", slug:"communications-equipment", short:"Comms equipment", stocks:[
+     ["CSCO","Cisco",1.5,"Networking upgrades for AI data centres and enterprise spending."],
+     ["ANET","Arista Networks",1,"High-speed switches for AI clusters; tied closely to hyperscaler capex."],
+     ["MSI","Motorola Solutions",0.4,"Public-safety radio and software contracts; steadier than most of tech."]]},
+   {name:"IT Services", slug:"it-services", short:"IT services", stocks:[
+     ["IBM","IBM",1.4,"Hybrid cloud and consulting demand, plus AI software deals."],
+     ["ACN","Accenture",1,"Corporate consulting budgets — slows when companies cut discretionary projects."],
+     ["CTSH","Cognizant",0.2,"Outsourcing demand and pricing pressure from AI automation."]]},
+   {name:"Electronic Equipment, Instruments & Components", slug:"electronic-components", short:"Electronic components", stocks:[
+     ["APH","Amphenol",1.1,"Connectors and cabling for AI data centres, autos and defence."],
+     ["GLW","Corning",0.4,"Optical fibre demand for data centres and glass for devices."],
+     ["TEL","TE Connectivity",0.4,"Industrial and auto sensor and connector demand."]]}
+  ];
+
+  // seeded sample moves so each period is stable between visits
+  function rng(seed){ return function(){ seed=(seed*16807)%2147483647; return (seed-1)/2147483646; }; }
+  var TF={ "1D":{label:"today",lead:"today",scale:1.4,bias:0.5,seed:11}, "1W":{label:"past week",lead:"over the past week",scale:2.8,bias:1.3,seed:23},
+           "1M":{label:"past month",lead:"over the past month",scale:5,bias:3,seed:37}, "6M":{label:"past six months",lead:"over the past six months",scale:11,bias:9,seed:53},
+           "1Y":{label:"past year",lead:"over the past year",scale:18,bias:19,seed:71} };
+  var indBias={"1D":[0.6,-0.4,0.1,0.3,-0.2,0.2],"1W":[1.5,-1.2,0.4,0.6,-0.8,0.5],"1M":[3.5,-2.5,0.6,1.2,-1.5,1],
+               "6M":[9,-6,2,4,-4,3],"1Y":[18,-8,4,10,-6,6]};
+
+  // Today's moves fixed so they match the Market Weather heatmap tile
+  var TODAY={"NVDA": -2.2, "AVGO": -2.6, "AMD": -1.9, "MU": -3.1, "QCOM": -0.8, "AMAT": -2.4, "INTC": -1.2, "TXN": -0.3, "LRCX": -2.0, "KLAC": -1.7, "ADI": -0.4, "MRVL": -2.8, "NXPI": -0.6, "MCHP": -0.5, "MSFT": -1.0, "ORCL": 0.9, "PLTR": -1.8, "CRM": 0.3, "NOW": -0.4, "ADBE": 0.2, "INTU": -0.2, "AAPL": -1.3, "DELL": -1.5, "SMCI": -3.4, "HPQ": 0.1, "CSCO": 0.4, "ANET": -1.1, "MSI": 0.6, "IBM": 0.5, "ACN": -0.2, "CTSH": 0.3, "APH": -1.4, "GLW": -0.6, "TEL": -0.3};
+  function compute(tf){
+    var c=TF[tf], r=rng(c.seed), all=[], tot=0, wsum=0;
+    IND.forEach(function(ind,ii){
+      ind.rows=ind.stocks.map(function(s){
+        var mv=Math.round(((r()-0.5)*2*c.scale + c.bias + indBias[tf][ii])*10)/10;
+        if(tf==='1D') mv=TODAY[s[0]];
+        var o={tk:s[0],nm:s[1],w:s[2],why:s[3],mv:mv,ind:ind.short}; o.ct=o.w*o.mv; all.push(o); return o;
+      });
+      ind.w=ind.rows.reduce(function(a,o){return a+o.w;},0);
+      ind.ct=ind.rows.reduce(function(a,o){return a+o.ct;},0);
+      ind.mv=ind.ct/ind.w; tot+=ind.ct; wsum+=ind.w;
+    });
+    return {all:all, mv:tot/wsum, ct:tot, up:all.filter(function(o){return o.mv>0;}).length};
+  }
+  function tl(tk){ return '<a class="tklink" href="stock-detail.html?sym='+tk+'">'+tk+'</a>'; }
+  function cap(t){ return t.charAt(0).toUpperCase()+t.slice(1); }
+  function fmt(v){ return (v>=0?'+':'−')+Math.abs(v).toFixed(1)+'%'; }
+  function cls(v){ return v>=0?'up':'down'; }
+  var chev='<svg class="chev" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>';
+
+  function moverHTML(o,total,label){
+    var share=Math.abs(o.ct/total*100);
+    return '<div class="mover"><button class="mover-top" type="button"><a class="tk tklink" href="stock-detail.html?sym='+o.tk+'" onclick="event.stopPropagation()">'+o.tk+'</a><span class="nm">'+o.nm+'</span><span class="chg '+cls(o.mv)+'">'+fmt(o.mv)+'</span>'+chev+'</button>'+
+      '<div class="mover-body"><div class="contrib">'+(o.ct>=0?'Pushed ':'Pulled ')+label+(o.ct>=0?' up':' down')+' — about '+Math.round(share)+'% as much as '+label+'\'s whole net move. '+o.ind+', ≈'+o.w+'% of the sector.</div>'+
+      '<div><b style="color:var(--text2);font-weight:600">What usually moves it:</b> '+o.why+'</div>'+
+      '<div class="news">The news behind this specific move will appear here once the feed is connected.</div>'+
+      '<a href="stock-detail.html">Open '+o.tk+' profile →</a></div></div>';
+  }
+  function llHTML(rows,total,label){
+    var s=rows.slice().sort(function(a,b){return b.ct-a.ct;});
+    var up=s.filter(function(o){return o.ct>0;}).slice(0,3), dn=s.filter(function(o){return o.ct<0;}).reverse().slice(0,3);
+    function col(list,k,t){ return '<div class="ll-col '+k+'"><h3>'+t+'</h3>'+(list.length?list.map(function(o){return moverHTML(o,total,label);}).join(''):'<p class="caveat">No stock held it back this period.</p>')+'</div>'; }
+    return col(up,'up','▲ Pushing up')+col(dn,'down','▼ Holding back');
+  }
+  function names(list){ return list.map(function(o){return tl(o.tk);}).join(' and '); }
+
+  var tf='1M';
+  var slug=(new URLSearchParams(location.search).get('ind'))||'semiconductors';
+  var CUR=IND.filter(function(i){return i.slug===slug;})[0]||IND[0];
+  var SPX_W=38;
+  function render(){
+    var d=compute(tf), c=TF[tf], ind=CUR, sumW=IND.reduce(function(a,i){return a+i.w;},0);
+    document.getElementById('crumbInd').textContent=ind.short;
+    document.getElementById('indName').textContent=ind.short;
+    document.getElementById('indFull').textContent=ind.name===ind.short?'GICS industry':ind.name;
+    var m=document.getElementById('secMove'); m.textContent=fmt(ind.mv); m.className='sec-move '+cls(ind.mv);
+    document.getElementById('secPeriod').textContent=c.label;
+    var diff=ind.mv-d.mv;
+    document.getElementById('vsSector').innerHTML='Information Technology: '+fmt(d.mv)+' · '+(Math.abs(diff)<0.3?'in line with the sector':(diff>0?'ahead of':'behind')+' the sector by '+Math.abs(diff).toFixed(1)+' pts');
+    document.getElementById('wSector').textContent='≈'+Math.round(ind.w/sumW*100)+'%';
+    document.getElementById('wSpx').textContent='≈'+(ind.w/sumW*SPX_W).toFixed(1)+'%';
+    var up=ind.rows.filter(function(o){return o.mv>0;}).length, broad=up/ind.rows.length;
+    document.getElementById('breadth').textContent=up+' of '+ind.rows.length;
+
+    var rs=ind.rows.slice().sort(function(a,b){return b.ct-a.ct;});
+    var ups=rs.filter(function(o){return o.ct>0;}).slice(0,2), dns=rs.filter(function(o){return o.ct<0;}).reverse().slice(0,2);
+    var shareOfSector=d.ct? Math.round(ind.ct/d.ct*100):0;
+    var t=cap(c.lead)+', '+ind.short.toLowerCase()+' '+(ind.mv>=0?'rose ':'fell ')+'<b>'+Math.abs(ind.mv).toFixed(1)+'%</b>. ';
+    if(ind.mv>=0){ if(ups.length) t+=names(ups)+' did most of the lifting. '; if(dns.length) t+=names(dns)+' held it back. '; }
+    else { if(dns.length) t+=names(dns)+' led the decline. '; if(ups.length) t+=names(ups)+' held up best. '; }
+    t+= ind.mv>=0 ? (broad>0.6?'The gain was broad. ':broad<0.4?'The gain was narrow — a few large names carried it. ':'Participation was mixed. ')
+                  : (broad<0.4?'The decline was broad. ':broad>0.6?'Most stocks rose — a few large names pulled it down. ':'Participation was mixed. ');
+    if((ind.ct>0)===(d.ct>0) && shareOfSector>0) t+='It accounted for about '+Math.min(shareOfSector,999)+'% of the sector\'s net move.';
+    else t+='It moved against the sector this period.';
+    document.getElementById('secSummary').innerHTML=t;
+
+    document.getElementById('secLL').innerHTML=llHTML(ind.rows,ind.ct||1,'the industry');
+
+    var maxAbs=Math.max.apply(null,ind.rows.map(function(o){return Math.abs(o.ct);}))||1;
+    document.getElementById('allList').innerHTML=rs.map(function(o){
+      var pct=Math.abs(o.ct)/maxAbs*50;
+      var bar=o.ct>=0?'<i style="left:50%;width:'+pct+'%;background:var(--green)"></i>':'<i style="right:50%;width:'+pct+'%;background:var(--red)"></i>';
+      return '<a class="all-row" href="stock-detail.html?sym='+o.tk+'"><span class="tk">'+o.tk+'</span><span class="nm">'+o.nm+'<small>≈'+Math.round(o.w/ind.w*100)+'% of industry</small></span><span class="contrib-bar">'+bar+'</span><span class="chg '+cls(o.mv)+'">'+fmt(o.mv)+'</span></a>';
+    }).join('');
+
+    document.getElementById('sibs').innerHTML=IND.filter(function(i){return i!==ind;}).map(function(i){
+      return '<a class="sib" href="industry.html?ind='+i.slug+'">'+i.short+' <b class="chg '+cls(i.mv)+'">'+fmt(i.mv)+'</b></a>';
+    }).join('');
+  }
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('.mover-top'); if(t){ t.parentNode.classList.toggle('open'); return; }
+    var h=e.target.closest('.sub-head'); if(h){ h.parentNode.classList.toggle('open'); }
+  });
+  document.getElementById('tfGroup').addEventListener('click',function(e){
+    var b=e.target.closest('.tf-btn'); if(!b) return;
+    document.querySelectorAll('.tf-btn').forEach(function(x){x.classList.remove('active');});
+    b.classList.add('active'); tf=b.getAttribute('data-tf'); render();
+  });
+  render();
+})();
+</script>
+</body>
+</html>

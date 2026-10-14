@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en" data-mode="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The Grid · Trendably</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Light mode (default) */
+    --bg: #FFFFFF;
+    --panel: #F4F9FE;
+    --panel2: #EAF3FC;
+    --border: #C9DCF2;
+    --border-soft: #DCE9F8;
+    --text1: #0B1C33;
+    --text2: #33547A;
+    --text3: #5A7699;
+    --text4: #8CA0BC;
+    --blue: #1C6FE0;
+    --cyan: #0EA5C4;
+    --green: #0E9F6E;
+    --red: #D23A58;
+    --amber: #D98A12;
+    --head-grad: linear-gradient(180deg, rgba(28,111,224,0.92) 0%, rgba(14,165,196,0.5) 65%, rgba(255,255,255,0) 100%);
+    --head-text: #FFFFFF;
+    --nav-grad: linear-gradient(180deg, rgba(28,111,224,0.45) 0%, rgba(14,165,196,0.16) 65%, rgba(255,255,255,0.02) 100%);
+    --accent-soft: rgba(28,111,224,0.07);
+    --shadow: 0 12px 28px rgba(11,28,51,0.12);
+    --strip-bg: #F4F9FE;
+    color-scheme: light;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  :root[data-mode="dark"] {
+    --bg: #05080E;
+    --panel: #0D1420;
+    --panel2: #121A27;
+    --border: #2A3850;
+    --border-soft: #1C2636;
+    --text1: #F3F6FB;
+    --text2: #B7C0D1;
+    --text3: #8593A8;
+    --text4: #5B6472;
+    --blue: #2F8CFF;
+    --cyan: #21D4F0;
+    --green: #2EE6A6;
+    --red: #FF5577;
+    --amber: #FFB23D;
+    --head-grad: linear-gradient(180deg, rgba(47,140,255,0.30) 0%, rgba(33,212,240,0.10) 70%, rgba(13,20,32,0) 100%);
+    --head-text: #EAF2FF;
+    --nav-grad: linear-gradient(180deg, rgba(47,140,255,0.16) 0%, rgba(33,212,240,0.05) 65%, rgba(5,8,14,0) 100%);
+    --accent-soft: rgba(47,140,255,0.12);
+    --shadow: 0 16px 34px rgba(0,0,0,0.5);
+    --strip-bg: #0A111C;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0; background: var(--bg); color: var(--text1);
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 0 18px 72px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 20px; margin-bottom: 16px;
+  }
+  h1, h2, h3 { font-family: 'Sora', sans-serif; margin: 0; letter-spacing: -0.02em; }
+  .caveat { font-size: 12px; color: var(--text4); line-height: 1.5; }
+  button { font-family: inherit; cursor: pointer; }
+  a { color: inherit; }
+  .hint-link {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--blue);
+    text-decoration: none; background: none; border: none; padding: 0; font-family: inherit;
+  }
+  .hint-link svg { flex: none; }
+  .hint-row {
+    display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 18px; padding: 12px 14px;
+    background: var(--accent-soft); border: 1px solid var(--border); border-radius: 10px;
+  }
+
+  /* ---------- Nav ---------- */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 18px; border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; top: env(safe-area-inset-top, 0px);
+    background: var(--nav-grad);
+    backdrop-filter: blur(10px); z-index: 20;
+  }
+  .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+  .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px rgba(14,165,196,0.5); }
+  .back { font-size: 13px; color: var(--text3); text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .brand .logo { width: 28px; height: 28px; flex: none; }
+  .word { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: -0.02em; color: var(--text1); }
+  .word span { background: linear-gradient(90deg, var(--blue), var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .page-tag { font-size: 12.5px; color: var(--text3); padding-left: 10px; margin-left: 2px; border-left: 1px solid var(--border); }
+  .nav-actions { display: flex; align-items: center; gap: 8px; }
+  .t-sun { display: none; }
+  :root[data-mode="dark"] .t-sun { display: block; }
+  :root[data-mode="dark"] .t-moon { display: none; }
+
+
+  .menu-btn {
+    width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--border-soft); background: none;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text2); flex: none;
+  }
+  .menu-btn svg { width: 16px; height: 16px; }
+
+  .nav-drawer {
+    position: fixed; inset: 0; z-index: 50; visibility: hidden;
+  }
+  .nav-drawer.open { visibility: visible; }
+  .nav-drawer .scrim {
+    position: absolute; inset: 0; background: rgba(11,28,51,0.35);
+    opacity: 0; transition: opacity 0.2s ease;
+  }
+  .nav-drawer.open .scrim { opacity: 1; }
+  .nav-drawer .panel {
+    position: absolute; top: 0; right: 0; bottom: 0; width: 78%; max-width: 300px;
+    background: var(--panel); border-left: 1px solid var(--border-soft);
+    padding: 20px 18px; transform: translateX(100%); transition: transform 0.25s ease;
+    box-shadow: var(--shadow);
+  }
+  .nav-drawer.open .panel { transform: translateX(0); }
+  .nav-drawer .panel h3 { font-family: 'Sora', sans-serif; font-size: 13px; color: var(--text3); font-weight: 600; margin: 0 0 14px; }
+  .nav-drawer .panel a {
+    display: flex; align-items: center; gap: 10px; padding: 11px 10px; border-radius: 9px;
+    color: var(--text1); text-decoration: none; font-size: 14px; font-weight: 500; margin-bottom: 2px;
+  }
+  .nav-drawer .panel a.current { background: var(--accent-soft); color: var(--blue); font-weight: 600; }
+  .nav-drawer .panel a .pg-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex: none; }
+  .nav-drawer .panel a.current .pg-dot { background: var(--blue); }
+
+  .page-head { text-align: center; padding: 26px 20px 6px; }
+  .page-head h1 { font-size: 22px; font-weight: 600; max-width: 22ch; margin: 0 auto; }
+  .page-head p { font-size: 14px; color: var(--text2); max-width: 440px; margin: 10px auto 0; line-height: 1.55; }
+
+  .section-head {
+    display: flex; align-items: baseline; justify-content: space-between; margin: -20px -20px 16px; padding: 15px 20px;
+    border-radius: 15px 15px 0 0;
+    background: var(--head-grad);
+  }
+  .section-head h2 { font-size: 17px; font-weight: 600; color: var(--head-text); }
+  .section-sub { font-size: 12.5px; color: var(--text3); margin: 4px 0 16px; line-height: 1.5; }
+
+  /* ---------- Sector heatmap (read-only, reused component) ---------- */
+  .heatmap { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .sector-tile {
+    background: var(--panel2); border-radius: 11px; padding: 11px 9px;
+    border: 1px solid var(--border-soft);
+  }
+  .sector-tile .s-name { font-size: 11px; font-weight: 600; color: var(--text2); }
+  .sector-tile .s-chg { font-family: 'Sora', sans-serif; font-size: 14px; font-weight: 700; margin-top: 3px; }
+
+  /* ---------- Stock selection ---------- */
+  .counter-row {
+    display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;
+    background: var(--panel2); border: 1px solid var(--border-soft); border-radius: 11px; padding: 11px 14px;
+  }
+  .counter-row .count { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 15px; }
+  .counter-row .count span { color: var(--cyan); }
+  .counter-row .count.full span { color: var(--amber); }
+  .search-box {
+    display: flex; align-items: center; gap: 8px; background: var(--panel2); border: 1px solid var(--border-soft);
+    border-radius: 10px; padding: 10px 13px; margin-bottom: 16px;
+  }
+  .search-box input {
+    flex: 1; background: none; border: none; outline: none; color: var(--text1); font-size: 13.5px; font-family: inherit;
+  }
+  .search-box input::placeholder { color: var(--text4); }
+  .search-box svg { flex: none; color: var(--text4); }
+
+  .sector-acc { border: 1px solid var(--border-soft); border-radius: 12px; margin-bottom: 8px; overflow: hidden; background: var(--panel2); }
+  .sector-acc-head {
+    display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 13px 14px;
+    background: none; border: none; color: var(--text1); text-align: left;
+  }
+  .sector-acc-head .name { font-size: 13.5px; font-weight: 600; }
+  .sector-acc-head .meta { display: flex; align-items: center; gap: 10px; }
+  .sector-acc-head .sel-count { font-size: 11.5px; color: var(--cyan); font-weight: 600; }
+  .sector-acc-head svg { transition: transform 0.2s ease; color: var(--text3); }
+  .sector-acc.open .sector-acc-head svg { transform: rotate(180deg); }
+  .sector-acc-body { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+  .sector-acc.open .sector-acc-body { max-height: 500px; }
+  .sector-acc-inner { padding: 0 14px 13px; border-top: 1px solid var(--border-soft); }
+  .stock-row {
+    display: flex; align-items: center; gap: 11px; padding: 9px 2px; cursor: pointer;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .stock-row:last-child { border-bottom: none; }
+  .stock-row.hidden { display: none; }
+  .stock-row .box {
+    width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--border); flex: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .stock-row.checked .box { background: var(--blue); border-color: var(--blue); }
+  .stock-row.checked { background: var(--accent-soft); margin: 0 -8px; padding: 9px 8px; border-radius: 8px; }
+  .stock-row .box svg { opacity: 0; width: 11px; height: 11px; }
+  .stock-row.checked .box svg { opacity: 1; }
+  .stock-row.disabled { opacity: 0.35; cursor: not-allowed; }
+  .stock-row .tk { font-family: 'Sora', sans-serif; font-size: 13px; font-weight: 600; }
+  .stock-row .nm { font-size: 11.5px; color: var(--text4); margin-left: 7px; }
+
+  /* ---------- Strategy selection ---------- */
+  .strat-acc { border: 1px solid var(--border-soft); border-radius: 12px; overflow: hidden; background: var(--panel2); }
+  .strat-acc-head {
+    display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 13px 14px;
+    background: none; border: none; color: var(--text1); text-align: left; cursor: pointer; font-family: inherit;
+  }
+  .strat-acc-head .name { font-size: 13.5px; font-weight: 600; }
+  .strat-acc-head .meta { display: flex; align-items: center; gap: 10px; }
+  .strat-acc-head .sel-count { font-size: 11.5px; color: var(--cyan); font-weight: 600; }
+  .strat-acc-head svg { transition: transform 0.2s ease; color: var(--text3); }
+  .strat-acc.open .strat-acc-head svg { transform: rotate(180deg); }
+  .strat-acc-body { max-height: 0; overflow: hidden; transition: max-height 0.25s ease; }
+  .strat-acc.open .strat-acc-body { max-height: 900px; }
+  #sectorAcc.open #sectorAccBody { max-height: 3000px; }
+  #sectorAccBody #sectorList { padding: 0 14px 14px; border-top: 1px solid var(--border-soft); margin-top: 1px; }
+  #sectorAccBody .sector-acc { margin: 12px 0 0; }
+  #sectorAccBody .sector-acc:first-child { margin-top: 12px; }
+  .strat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 14px 14px; border-top: 1px solid var(--border-soft); margin-top: 1px; }
+  .strat-card {
+    background: var(--panel2); border: 1.5px solid var(--border-soft); border-radius: 12px; padding: 13px;
+    cursor: pointer; transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .strat-card.active { border-color: var(--blue); background: var(--accent-soft); box-shadow: 0 0 0 1px var(--blue) inset; }
+  .strat-card .sname { font-family: 'Sora', sans-serif; font-size: 13.5px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .strat-card .sparam { font-size: 11px; color: var(--text4); margin-top: 3px; }
+  .strat-check {
+    width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--border); flex: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .strat-card.active .strat-check { background: var(--blue); border-color: var(--blue); }
+  .strat-check svg { opacity: 0; width: 10px; height: 10px; }
+  .strat-card.active .strat-check svg { opacity: 1; }
+
+  /* ---------- Results heatmap ---------- */
+  .results-empty {
+    text-align: center; padding: 36px 20px; color: var(--text3); font-size: 13.5px; line-height: 1.6;
+  }
+  .results-empty .big-icon { font-size: 26px; margin-bottom: 10px; opacity: 0.5; }
+  .matrix-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table.matrix { border-collapse: collapse; width: 100%; min-width: 460px; }
+  table.matrix th { text-align: center; padding: 10px 12px; color: var(--text3); font-weight: 500; font-size: 11.5px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  table.matrix th.row-h { text-align: left; position: sticky; left: 0; background: var(--panel2); z-index: 2; }
+  table.matrix th .param { display: block; font-size: 9.5px; color: var(--text4); font-weight: 400; margin-top: 2px; }
+  table.matrix td { text-align: center; padding: 10px 12px; border-bottom: 1px solid var(--border-soft); }
+  table.matrix td.row-h {
+    text-align: left; position: sticky; left: 0; background: var(--panel); z-index: 1; white-space: nowrap;
+  }
+  table.matrix td.row-h a { font-family: 'Sora', sans-serif; font-weight: 600; font-size: 13px; color: var(--text1); text-decoration: none; }
+  table.matrix td.row-h a:hover { color: var(--cyan); }
+  .cell-link { display: block; text-decoration: none; color: inherit; border-radius: 8px; padding: 6px 4px; }
+  .cell-link .ret { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 13.5px; }
+  .cell-link.best { outline: 2px solid var(--cyan); outline-offset: -2px; background: rgba(14,165,196,0.1); }
+  .scroll-hint { display: none; font-size: 11px; color: var(--blue); margin-top: 8px; text-align: center; }
+
+  @media (max-width: 560px) {
+    .heatmap { grid-template-columns: repeat(2, 1fr); }
+    .strat-grid { grid-template-columns: 1fr; }
+    .scroll-hint { display: block; }
+  }
+
+  /* ---------- Shared header: market strip + pick-a-stock search ---------- */
+  .mkt-strip {
+    display: flex; gap: 20px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    padding: 9px 18px; background: var(--strip-bg); border-bottom: 1px solid var(--border-soft);
+    font-size: 12px; color: var(--text3); white-space: nowrap; scrollbar-width: none;
+  }
+  .mkt-strip::-webkit-scrollbar { display: none; }
+  .mkt-strip b { font-weight: 600; }
+  .mkt-strip .pos { color: var(--green); } .mkt-strip .neg { color: var(--red); }
+  .pick-stock-bar {
+    display: flex; align-items: center; gap: 9px; padding: 12px 18px;
+    background: var(--panel2); border-bottom: 1px solid var(--border);
+  }
+  .pick-stock-bar svg { flex: none; color: var(--text4); }
+  .pick-stock-bar input {
+    flex: 1; background: none; border: none; outline: none; color: var(--text1);
+    font-size: 13.5px; font-family: inherit;
+  }
+  .pick-stock-bar input::placeholder { color: var(--text4); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="index.html" aria-label="Trendably home">
+    <svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="mk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0E1A3D"/><stop offset=".6" stop-color="#1D5FD0"/><stop offset="1" stop-color="#2F8CFF"/></linearGradient></defs><rect width="40" height="40" rx="11" fill="url(#mk)"/><rect x="8" y="26" width="3.4" height="8" rx="1" fill="#8FC0FF"/><rect x="14" y="21" width="3.4" height="13" rx="1" fill="#8FC0FF"/><rect x="20" y="24" width="3.4" height="10" rx="1" fill="#8FC0FF"/><rect x="26" y="15" width="3.4" height="19" rx="1" fill="#8FC0FF"/><path d="M6 27L15 19L21 24L34 9" stroke="#21D4F0" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="word">trend<span>ably</span></span>
+    <span class="page-tag">The Grid</span>
+  </a>
+  <div class="nav-actions">
+    <button class="menu-btn" id="themeBtn" type="button" aria-label="Switch light or dark">
+      <svg class="t-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      <svg class="t-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
+    </button>
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Open navigation">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="nav-drawer" id="navDrawer">
+  <div class="scrim" id="navScrim"></div>
+  <div class="panel">
+    <h3>Trendably</h3>
+    <a href="index.html"><span class="pg-dot"></span>Home</a>
+    <a href="market-weather.html"><span class="pg-dot"></span>Market Weather</a>
+    <a href="the-grid.html" class="current"><span class="pg-dot"></span>The Grid</a>
+    <a href="stock-detail.html"><span class="pg-dot"></span>Stock Detail</a>
+    <a href="strategy-lab.html"><span class="pg-dot"></span>Strategy Lab</a>
+    <a href="study-room.html"><span class="pg-dot"></span>Study Room</a>
+  </div>
+</div>
+
+<div class="mkt-strip">
+  <span>S&amp;P 500 <b class="pos">+0.8%</b></span>
+  <span>NASDAQ <b class="pos">+1.1%</b></span>
+  <span>VIX <b class="pos">14.8</b></span>
+  <span>NVDA <b class="pos">+2.4%</b></span>
+  <span>10Y Yield <b>4.18%</b></span>
+</div>
+<div class="pick-stock-bar">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+  <input type="text" placeholder="Jump straight to a stock's profile — search any ticker">
+</div>
+
+<div class="wrap">
+
+  <section class="page-head">
+    <h1>Build your grid</h1>
+    <p>Pick up to 10 stocks and the strategies to test them against — then see every pairing's backtested result at once.</p>
+  </section>
+
+  <!-- ================= TODAY'S SECTOR MOVES ================= -->
+  <section class="card">
+    <div class="section-head"><h2>Today's Sector Moves</h2></div>
+    <p class="section-sub">For orientation only — not part of your selection below.</p>
+    <div class="heatmap">
+      <div class="sector-tile" style="background: rgba(14,159,110,0.55); border-color: transparent; outline: 1.5px solid #0EA5C4; outline-offset: -1.5px;"><div class="s-name">Energy</div><div class="s-chg" style="color:#0E9F6E;">+1.8%</div></div>
+      <div class="sector-tile" style="background: rgba(14,159,110,0.44); border-color: transparent;"><div class="s-name">Utilities</div><div class="s-chg" style="color:#0E9F6E;">+0.9%</div></div>
+      <div class="sector-tile" style="background: rgba(14,159,110,0.28); border-color: transparent;"><div class="s-name">Industrials</div><div class="s-chg" style="color:#0E9F6E;">+0.2%</div></div>
+      <div class="sector-tile" style="background: rgba(14,159,110,0.24); border-color: transparent;"><div class="s-name">Materials</div><div class="s-chg" style="color:#0E9F6E;">+0.1%</div></div>
+      <div class="sector-tile" style="background: rgba(210,58,88,0.24); border-color: transparent;"><div class="s-name">Financials</div><div class="s-chg" style="color:#D23A58;">−0.1%</div></div>
+      <div class="sector-tile" style="background: rgba(210,58,88,0.29); border-color: transparent;"><div class="s-name">Real Estate</div><div class="s-chg" style="color:#D23A58;">−0.3%</div></div>
+      <div class="sector-tile" style="background: rgba(210,58,88,0.31); border-color: transparent;"><div class="s-name">Comm. Services</div><div class="s-chg" style="color:#D23A58;">−0.4%</div></div>
+      <div class="sector-tile" style="background: rgba(14,159,110,0.29); border-color: transparent;"><div class="s-name">Cons. Staples</div><div class="s-chg" style="color:#0E9F6E;">+0.3%</div></div>
+      <div class="sector-tile" style="background: rgba(210,58,88,0.37); border-color: transparent;"><div class="s-name">Health Care</div><div class="s-chg" style="color:#D23A58;">−0.6%</div></div>
+      <div class="sector-tile" style="background: rgba(210,58,88,0.38); border-color: transparent;"><div class="s-name">Cons. Discretionary</div><div class="s-chg" style="color:#D23A58;">−0.7%</div></div>
+      <div class="sector-tile" style="background: rgba(210,58,88,0.55); border-color: transparent;"><div class="s-name">Information Technology</div><div class="s-chg" style="color:#D23A58;">−1.4%</div></div>
+    </div>
+    <div class="hint-row">
+      <a class="hint-link" href="#">
+        Want the fuller story behind today's moves? Market Weather has it.
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ================= STOCK SELECTION ================= -->
+  <section class="card">
+    <div class="section-head"><h2>Pick your stocks</h2></div>
+    <p class="section-sub">Browse by sector, or search directly if you already know the ticker.</p>
+
+    <div class="counter-row">
+      <span style="font-size:12.5px; color: var(--text3);">Selected</span>
+      <span class="count" id="stockCount"><span id="stockCountN">0</span> of 10</span>
+    </div>
+
+    <div class="search-box">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input type="text" id="stockSearch" placeholder="Search by ticker or company name…">
+    </div>
+
+    <div class="strat-acc" id="sectorAcc">
+      <button class="strat-acc-head" id="sectorAccHead" type="button">
+        <span class="name">S&amp;P 500 · 11 sectors</span>
+        <span class="meta"><span class="sel-count" id="sectorAccSelCount" style="display:none;"></span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
+      </button>
+      <div class="strat-acc-body" id="sectorAccBody">
+        <div id="sectorList"></div>
+      </div>
+    </div>
+
+    <div class="hint-row">
+      <a class="hint-link" href="#">
+        Want the full picture on a stock first? Open Stock Detail
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ================= STRATEGY SELECTION ================= -->
+  <section class="card">
+    <div class="section-head"><h2>Pick your strategies</h2></div>
+    <p class="section-sub">Each uses a fixed, standard setting here. Adjust parameters and watch a backtest run live in Strategy Lab.</p>
+
+    <div class="strat-acc" id="stratAcc">
+      <button class="strat-acc-head" id="stratAccHead" type="button">
+        <span class="name">8 strategies</span>
+        <span class="meta"><span class="sel-count" id="stratSelCount" style="display:none;"></span>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>
+      </button>
+      <div class="strat-acc-body">
+        <div class="strat-grid" id="stratGrid"></div>
+      </div>
+    </div>
+
+    <div class="hint-row">
+      <a class="hint-link" href="#">
+        New to these? Study Room explains the mechanics
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="hint-link" href="#">
+        Want performance detail? Strategy Lab has the backtests
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- ================= RESULTS ================= -->
+  <section class="card">
+    <div class="section-head"><h2>Results</h2></div>
+    <p class="section-sub">Backtested return per pairing. Best strategy per stock is outlined.</p>
+    <div id="resultsArea"></div>
+    <div class="scroll-hint" id="scrollHint">⟷ scroll for more strategies</div>
+    <p class="caveat" style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border-soft);">Illustrative sample data. Backtested performance is historical — it is not a promise of future results.</p>
+  </section>
+
+</div>
+
+<script>
+(function(){
+  // ---- Theme toggle ----
+  var root = document.documentElement;
+  try { var saved = localStorage.getItem('tb-mode'); if (saved) root.setAttribute('data-mode', saved); } catch(e){}
+  document.getElementById('themeBtn').addEventListener('click', function(){
+    var dark = root.getAttribute('data-mode') === 'dark';
+    root.setAttribute('data-mode', dark ? 'light' : 'dark');
+    try { localStorage.setItem('tb-mode', dark ? 'light' : 'dark'); } catch(e){}
+  });
+
+  // ---- Nav drawer ----
+  var navDrawer = document.getElementById('navDrawer');
+  document.getElementById('menuBtn').addEventListener('click', function(){ navDrawer.classList.add('open'); });
+  document.getElementById('navScrim').addEventListener('click', function(){ navDrawer.classList.remove('open'); });
+
+  // ---- Sample universe: sector -> stocks (illustrative subset, not the full S&P 500) ----
+  var universe = [
+    { sector: "Information Technology", stocks: [["AAPL","Apple"],["MSFT","Microsoft"],["NVDA","Nvidia"],["AMD","AMD"]] },
+    { sector: "Financials", stocks: [["JPM","JPMorgan Chase"],["BRK.B","Berkshire Hathaway"]] },
+    { sector: "Health Care", stocks: [["UNH","UnitedHealth"],["JNJ","Johnson & Johnson"]] },
+    { sector: "Consumer Discretionary", stocks: [["AMZN","Amazon"],["HD","Home Depot"]] },
+    { sector: "Communication Services", stocks: [["GOOGL","Alphabet"],["META","Meta Platforms"]] },
+    { sector: "Industrials", stocks: [["HON","Honeywell"],["CAT","Caterpillar"]] },
+    { sector: "Consumer Staples", stocks: [["PG","Procter & Gamble"],["KO","Coca-Cola"]] },
+    { sector: "Energy", stocks: [["XOM","Exxon Mobil"],["CVX","Chevron"]] },
+    { sector: "Utilities", stocks: [["NEE","NextEra Energy"],["DUK","Duke Energy"]] },
+    { sector: "Real Estate", stocks: [["PLD","Prologis"],["AMT","American Tower"]] },
+    { sector: "Materials", stocks: [["LIN","Linde"],["SHW","Sherwin-Williams"]] }
+  ];
+
+  var strategies = [
+    { id: "ma",   name: "MA Crossover",    param: "20/50-day crossover" },
+    { id: "gc",   name: "Golden Cross",     param: "50/200-day crossover" },
+    { id: "macd", name: "MACD",             param: "12/26/9" },
+    { id: "bb",   name: "Bollinger Bands",  param: "20-day, 2σ" },
+    { id: "mom",  name: "Momentum",         param: "12-month lookback" },
+    { id: "mr",   name: "Mean Reversion",   param: "14-day RSI, 30/55" },
+    { id: "bo",   name: "Breakout",         param: "20/10-day Donchian" },
+    { id: "bh",   name: "Buy & Hold",       param: "No signals" }
+  ];
+
+  var MAX_STOCKS = 10;
+  var selectedStocks = []; // array of [ticker, name]
+  var selectedStrats = []; // array of strategy ids
+
+  // ---- Load real backtest data ----
+  // Map frontend strategy IDs to backend IDs
+  var strategyMap = {
+    'ma': 'ma_crossover',
+    'gc': 'golden_cross',
+    'macd': 'macd',
+    'bb': 'bollinger',
+    'mom': 'momentum',
+    'mr': 'mean_reversion',
+    'bo': 'breakout',
+    'bh': 'buy_hold'
+  };
+
+  // Global data loaded from grid.json
+  var GRID_DATA = null;
+  var GRID_WINDOW = '1y';  // Which window to display (1y, 3y, or 5y)
+
+  function returnFor(ticker, stratId){
+    // If no data loaded yet, return placeholder
+    if(!GRID_DATA || !GRID_DATA.results){
+      return 0;
+    }
+
+    // Map frontend ID to backend ID
+    var backendStratId = strategyMap[stratId] || stratId;
+
+    // Look up result: GRID.results[ticker][window][strategy] = [annual%, total%, maxDD%, winRate%, trades]
+    var tickerData = GRID_DATA.results[ticker];
+    if(!tickerData) return null;
+
+    var windowData = tickerData[GRID_WINDOW];
+    if(!windowData) return null;
+
+    var stratData = windowData[backendStratId];
+    if(!stratData) return null;
+
+    // Return total return (index 1)
+    return stratData[1];
+  }
+
+  // ---- Build sector accordions ----
+  var sectorListEl = document.getElementById('sectorList');
+  universe.forEach(function(group, gi){
+    var acc = document.createElement('div');
+    acc.className = 'sector-acc';
+    acc.dataset.sector = group.sector;
+
+    var head = document.createElement('button');
+    head.className = 'sector-acc-head';
+    head.innerHTML =
+      '<span class="name">' + group.sector + '</span>' +
+      '<span class="meta"><span class="sel-count" style="display:none;"></span>' +
+      '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></span>';
+    acc.appendChild(head);
+
+    var body = document.createElement('div');
+    body.className = 'sector-acc-body';
+    var inner = document.createElement('div');
+    inner.className = 'sector-acc-inner';
+    group.stocks.forEach(function(pair){
+      var row = document.createElement('div');
+      row.className = 'stock-row';
+      row.dataset.ticker = pair[0];
+      row.dataset.name = pair[1].toLowerCase();
+      row.innerHTML =
+        '<span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span>' +
+        '<span class="tk">' + pair[0] + '</span><span class="nm">' + pair[1] + '</span>';
+      row.addEventListener('click', function(){ toggleStock(pair[0], pair[1], row); });
+      inner.appendChild(row);
+    });
+    body.appendChild(inner);
+    acc.appendChild(body);
+
+    head.addEventListener('click', function(){
+      acc.classList.toggle('open');
+    });
+
+    sectorListEl.appendChild(acc);
+  });
+
+  function updateSectorCounts(){
+    document.querySelectorAll('.sector-acc').forEach(function(acc){
+      var sector = acc.dataset.sector;
+      var n = selectedStocks.filter(function(s){ return universe.find(function(g){ return g.sector===sector; }).stocks.some(function(p){ return p[0]===s[0]; }); }).length;
+      var el = acc.querySelector('.sel-count');
+      if(n > 0){ el.style.display = 'inline'; el.textContent = n + ' selected'; }
+      else { el.style.display = 'none'; }
+    });
+    var total = selectedStocks.length;
+    var outerEl = document.getElementById('sectorAccSelCount');
+    if(total > 0){ outerEl.style.display = 'inline'; outerEl.textContent = total + ' selected'; }
+    else { outerEl.style.display = 'none'; }
+  }
+
+  document.getElementById('sectorAccHead').addEventListener('click', function(){
+    document.getElementById('sectorAcc').classList.toggle('open');
+  });
+
+  function toggleStock(ticker, name, rowEl){
+    var idx = selectedStocks.findIndex(function(s){ return s[0]===ticker; });
+    if(idx >= 0){
+      selectedStocks.splice(idx, 1);
+    } else {
+      if(selectedStocks.length >= MAX_STOCKS) return;
+      selectedStocks.push([ticker, name]);
+    }
+    refreshStockUI();
+  }
+
+  function refreshStockUI(){
+    document.querySelectorAll('.stock-row').forEach(function(row){
+      var t = row.dataset.ticker;
+      var isChecked = selectedStocks.some(function(s){ return s[0]===t; });
+      row.classList.toggle('checked', isChecked);
+      var atCap = selectedStocks.length >= MAX_STOCKS;
+      row.classList.toggle('disabled', atCap && !isChecked);
+    });
+    var n = selectedStocks.length;
+    document.getElementById('stockCountN').textContent = n;
+    document.getElementById('stockCount').classList.toggle('full', n >= MAX_STOCKS);
+    updateSectorCounts();
+    renderResults();
+  }
+
+  // ---- Search filter ----
+  document.getElementById('stockSearch').addEventListener('input', function(e){
+    var q = e.target.value.trim().toLowerCase();
+    document.getElementById('sectorAcc').classList.toggle('open', !!q);
+    document.querySelectorAll('.sector-acc').forEach(function(acc){
+      var anyMatch = false;
+      acc.querySelectorAll('.stock-row').forEach(function(row){
+        var match = !q || row.dataset.ticker.toLowerCase().indexOf(q) > -1 || row.dataset.name.indexOf(q) > -1;
+        row.classList.toggle('hidden', !match);
+        if(match) anyMatch = true;
+      });
+      if(q){ acc.classList.toggle('open', anyMatch); acc.style.display = anyMatch ? '' : 'none'; }
+      else { acc.style.display = ''; }
+    });
+  });
+
+  // ---- Strategy cards ----
+  var stratGridEl = document.getElementById('stratGrid');
+  var stratAccEl = document.getElementById('stratAcc');
+  var stratSelCountEl = document.getElementById('stratSelCount');
+  strategies.forEach(function(strat){
+    var card = document.createElement('div');
+    card.className = 'strat-card';
+    card.dataset.id = strat.id;
+    card.innerHTML =
+      '<div class="sname">' + strat.name + '<span class="strat-check"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M5 13l4 4L19 7"/></svg></span></div>' +
+      '<div class="sparam">' + strat.param + '</div>';
+    card.addEventListener('click', function(){
+      var i = selectedStrats.indexOf(strat.id);
+      if(i >= 0){ selectedStrats.splice(i,1); } else { selectedStrats.push(strat.id); }
+      card.classList.toggle('active');
+      updateStratCount();
+      renderResults();
+    });
+    stratGridEl.appendChild(card);
+  });
+
+  document.getElementById('stratAccHead').addEventListener('click', function(){
+    stratAccEl.classList.toggle('open');
+  });
+
+  function updateStratCount(){
+    var n = selectedStrats.length;
+    if(n > 0){ stratSelCountEl.style.display = 'inline'; stratSelCountEl.textContent = n + ' selected'; }
+    else { stratSelCountEl.style.display = 'none'; }
+  }
+
+  // ---- Results rendering ----
+  function colorFor(ret){
+    if(ret > 5) return '#0E9F6E';
+    if(ret > 0) return '#5FC79D';
+    if(ret > -8) return '#E8879B';
+    return '#D23A58';
+  }
+
+  function renderResults(){
+    var area = document.getElementById('resultsArea');
+    var hint = document.getElementById('scrollHint');
+    if(selectedStocks.length === 0 || selectedStrats.length === 0){
+      hint.style.display = 'none';
+      area.innerHTML =
+        '<div class="results-empty"><div class="big-icon">◱</div>' +
+        (selectedStocks.length === 0
+          ? 'Pick at least one stock above to see results.'
+          : 'Pick at least one strategy above to see results.') +
+        '</div>';
+      return;
+    }
+    hint.style.display = '';
+    var stratObjs = strategies.filter(function(s){ return selectedStrats.indexOf(s.id) > -1; });
+
+    var html = '<div class="matrix-scroll"><table class="matrix"><thead><tr><th class="row-h">Stock</th>';
+    stratObjs.forEach(function(s){
+      html += '<th>' + s.name + '<span class="param">' + s.param + '</span></th>';
+    });
+    html += '</tr></thead><tbody>';
+
+    selectedStocks.forEach(function(stock){
+      var ticker = stock[0];
+      var rets = stratObjs.map(function(s){ return { id: s.id, ret: returnFor(ticker, s.id) }; });
+
+      // Filter out null results and find best
+      var validRets = rets.filter(function(r){ return r.ret !== null; });
+      var best = validRets.length > 0 ? validRets.reduce(function(a,b){ return b.ret > a.ret ? b : a; }, validRets[0]) : null;
+
+      html += '<tr><td class="row-h"><a href="#">' + ticker + '</a></td>';
+      rets.forEach(function(r){
+        if(r.ret === null){
+          html += '<td><span style="color:var(--text4);">—</span></td>';
+        } else {
+          var isBest = best && r.id === best.id;
+          html += '<td><a class="cell-link' + (isBest ? ' best' : '') + '" href="#">' +
+            '<span class="ret" style="color:' + colorFor(r.ret) + ';">' + (r.ret >= 0 ? '+' : '') + r.ret.toFixed(1) + '%</span>' +
+            '</a></td>';
+        }
+      });
+      html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+    area.innerHTML = html;
+  }
+
+  // Load grid data
+  fetch('data/grid.json')
+    .then(function(response){
+      if(!response.ok){
+        console.warn('Grid data not available, showing placeholders');
+        return null;
+      }
+      return response.json();
+    })
+    .then(function(data){
+      if(data){
+        GRID_DATA = data;
+        console.log('Loaded grid data for ' + Object.keys(data.results || {}).length + ' stocks');
+      }
+      refreshStockUI();
+      renderResults();
+    })
+    .catch(function(err){
+      console.error('Failed to load grid data:', err);
+      refreshStockUI();
+      renderResults();
+    });
+})();
+</script>
+
+</body>
+</html>

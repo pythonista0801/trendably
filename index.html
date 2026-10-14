@@ -1,0 +1,496 @@
+<!doctype html>
+<html lang="en" data-mode="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trendably — read the market, then test your move</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Light mode (default) */
+    --bg: #FFFFFF;
+    --panel: #F4F9FE;
+    --panel2: #EAF3FC;
+    --border: #C9DCF2;
+    --border-soft: #DCE9F8;
+    --text1: #0B1C33;
+    --text2: #33547A;
+    --text3: #5A7699;
+    --text4: #8CA0BC;
+    --blue: #1C6FE0;
+    --cyan: #0EA5C4;
+    --green: #0E9F6E;
+    --red: #D23A58;
+    --head-grad: linear-gradient(180deg, rgba(28,111,224,0.92) 0%, rgba(14,165,196,0.5) 65%, rgba(255,255,255,0) 100%);
+    --head-text: #FFFFFF;
+    --nav-grad: linear-gradient(180deg, rgba(28,111,224,0.45) 0%, rgba(14,165,196,0.16) 65%, rgba(255,255,255,0.02) 100%);
+    --accent-soft: rgba(28,111,224,0.07);
+    --shadow: 0 12px 28px rgba(11,28,51,0.12);
+    --strip-bg: #F4F9FE;
+    --sky: #6FA8E8;
+    --emo-fear: #E8668A; --emo-unc: #F2A541; --emo-opt: #14B4C8; --emo-conf: #7B6BEF;
+    color-scheme: light;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  :root[data-mode="dark"] {
+    --bg: #05080E;
+    --panel: #0D1420;
+    --panel2: #121A27;
+    --border: #2A3850;
+    --border-soft: #1C2636;
+    --text1: #F3F6FB;
+    --text2: #B7C0D1;
+    --text3: #8593A8;
+    --text4: #5B6472;
+    --blue: #2F8CFF;
+    --cyan: #21D4F0;
+    --green: #2EE6A6;
+    --red: #FF5577;
+    --head-grad: linear-gradient(180deg, rgba(47,140,255,0.30) 0%, rgba(33,212,240,0.10) 70%, rgba(13,20,32,0) 100%);
+    --head-text: #EAF2FF;
+    --nav-grad: linear-gradient(180deg, rgba(47,140,255,0.16) 0%, rgba(33,212,240,0.05) 65%, rgba(5,8,14,0) 100%);
+    --accent-soft: rgba(47,140,255,0.12);
+    --shadow: 0 16px 34px rgba(0,0,0,0.5);
+    --strip-bg: #0A111C;
+    --sky: #8FC0FF;
+    --emo-fear: #FF8AA6; --emo-unc: #FFBE66; --emo-opt: #3FDDF0; --emo-conf: #A596FF;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0; background: var(--bg); color: var(--text1);
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 0 18px 72px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 20px; margin-bottom: 16px;
+  }
+  h1, h2, h3 { font-family: 'Sora', sans-serif; margin: 0; letter-spacing: -0.02em; }
+  .caveat { font-size: 12px; color: var(--text4); line-height: 1.5; }
+  button { font-family: inherit; cursor: pointer; }
+  a { color: inherit; }
+  .hint-link {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--blue);
+    text-decoration: none; background: none; border: none; padding: 0; font-family: inherit;
+  }
+  .hint-link svg { flex: none; }
+  .hint-row {
+    display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 18px; padding: 12px 14px;
+    background: var(--accent-soft); border: 1px solid var(--border); border-radius: 10px;
+  }
+
+  /* ---------- Nav ---------- */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 18px; border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; top: env(safe-area-inset-top, 0px);
+    background: var(--nav-grad);
+    backdrop-filter: blur(10px); z-index: 20;
+  }
+  .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+  .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px rgba(14,165,196,0.5); }
+  .back { font-size: 13px; color: var(--text3); text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .brand .logo { width: 28px; height: 28px; flex: none; }
+  .word { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: -0.02em; color: var(--text1); }
+  .word span { background: linear-gradient(90deg, var(--blue), var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .page-tag { font-size: 12.5px; color: var(--text3); padding-left: 10px; margin-left: 2px; border-left: 1px solid var(--border); }
+  .nav-actions { display: flex; align-items: center; gap: 8px; }
+  .t-sun { display: none; }
+  :root[data-mode="dark"] .t-sun { display: block; }
+  :root[data-mode="dark"] .t-moon { display: none; }
+
+
+  .menu-btn {
+    width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--border-soft); background: none;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text2); flex: none;
+  }
+  .menu-btn svg { width: 16px; height: 16px; }
+
+  .nav-drawer {
+    position: fixed; inset: 0; z-index: 50; visibility: hidden;
+  }
+  .nav-drawer.open { visibility: visible; }
+  .nav-drawer .scrim {
+    position: absolute; inset: 0; background: rgba(5,8,14,0.45);
+    opacity: 0; transition: opacity 0.2s ease;
+  }
+  .nav-drawer.open .scrim { opacity: 1; }
+  .nav-drawer .panel {
+    position: absolute; top: 0; right: 0; bottom: 0; width: 78%; max-width: 300px;
+    background: var(--panel); border-left: 1px solid var(--border-soft);
+    padding: 20px 18px; transform: translateX(100%); transition: transform 0.25s ease;
+    box-shadow: var(--shadow);
+  }
+  .nav-drawer.open .panel { transform: translateX(0); }
+  .nav-drawer .panel h3 { font-family: 'Sora', sans-serif; font-size: 13px; color: var(--text3); font-weight: 600; margin: 0 0 14px; }
+  .nav-drawer .panel a {
+    display: flex; align-items: center; gap: 10px; padding: 11px 10px; border-radius: 9px;
+    color: var(--text1); text-decoration: none; font-size: 14px; font-weight: 500; margin-bottom: 2px;
+  }
+  .nav-drawer .panel a.current { background: var(--accent-soft); color: var(--blue); font-weight: 600; }
+  .nav-drawer .panel a .pg-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex: none; }
+  .nav-drawer .panel a.current .pg-dot { background: var(--blue); }
+
+  .page-head { text-align: center; padding: 26px 20px 6px; }
+  .page-head h1 { font-size: 22px; font-weight: 600; max-width: 22ch; margin: 0 auto; }
+  .page-head p { font-size: 14px; color: var(--text2); max-width: 440px; margin: 10px auto 0; line-height: 1.55; }
+
+  .section-head {
+    display: flex; align-items: baseline; justify-content: space-between; margin: -20px -20px 16px; padding: 15px 20px;
+    border-radius: 15px 15px 0 0;
+    background: var(--head-grad);
+  }
+  .section-head h2 { font-size: 17px; font-weight: 600; color: var(--head-text); }
+  .section-sub { font-size: 12.5px; color: var(--text3); margin: 4px 0 16px; line-height: 1.5; }
+
+  /* ---------- Shared header: market strip + pick-a-stock search ---------- */
+  .mkt-strip {
+    display: flex; gap: 20px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    padding: 9px 18px; background: var(--strip-bg); border-bottom: 1px solid var(--border-soft);
+    font-size: 12px; color: var(--text3); white-space: nowrap; scrollbar-width: none;
+  }
+  .mkt-strip::-webkit-scrollbar { display: none; }
+  .mkt-strip b { font-weight: 600; }
+  .mkt-strip .pos { color: var(--green); } .mkt-strip .neg { color: var(--red); }
+  .pick-stock-bar {
+    display: flex; align-items: center; gap: 9px; padding: 12px 18px;
+    background: var(--panel2); border-bottom: 1px solid var(--border);
+  }
+  .pick-stock-bar svg { flex: none; color: var(--text4); }
+  .pick-stock-bar input {
+    flex: 1; background: none; border: none; outline: none; color: var(--text1);
+    font-size: 13.5px; font-family: inherit;
+  }
+  .pick-stock-bar input::placeholder { color: var(--text4); }
+
+  
+  .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font-size: 12.5px; color: var(--text3); padding: 18px 2px 0; }
+  .crumbs a { color: var(--blue); text-decoration: none; }
+  .crumbs > * { white-space: nowrap; }
+
+
+  /* ---------- Landing ---------- */
+  .hero { padding: 40px 4px 8px; }
+  .hero h1 { font-size: clamp(30px, 8.4vw, 46px); line-height: 1.06; font-weight: 700; letter-spacing: -0.035em; max-width: 17ch; }
+  .hero h1 .second { display: block; color: var(--blue); }
+  .hero p { font-size: 16px; line-height: 1.6; color: var(--text2); max-width: 46ch; margin: 18px 0 0; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 13px 20px; border-radius: 12px;
+    font-family: 'Sora', sans-serif; font-size: 14.5px; font-weight: 600; text-decoration: none; border: 1.5px solid transparent; }
+  .btn.primary { background: var(--blue); color: #fff; }
+  .btn.ghost { border-color: var(--border); color: var(--text1); background: var(--bg); }
+  .btn:focus-visible, .j-step:focus-visible, a:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+  .fine { font-size: 12.5px; color: var(--text3); margin-top: 12px; }
+
+  .today { margin-top: 30px; display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 0; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: var(--panel); }
+  .today div { padding: 12px 14px; border-left: 1px solid var(--border-soft); }
+  .today div:first-child { border-left: none; }
+  .today span { display: block; font-size: 11.5px; color: var(--text3); }
+  .today b { display: block; font-family: 'Sora', sans-serif; font-size: 15px; margin-top: 3px; }
+  .today .pos { color: var(--green); } .today .neg { color: var(--red); }
+
+  .blk { margin-top: 56px; }
+  .blk > h2 { font-size: 24px; font-weight: 600; letter-spacing: -0.025em; line-height: 1.2; max-width: 22ch; }
+  .blk > p { font-size: 15px; line-height: 1.6; color: var(--text2); max-width: 52ch; margin: 10px 0 18px; }
+  .more { display: inline-flex; gap: 6px; align-items: center; font-size: 13.5px; font-weight: 500; color: var(--blue); text-decoration: none; margin-top: 14px; }
+
+  /* journey */
+  .journey { list-style: none; margin: 0; padding: 0; position: relative; }
+  .journey::before { content: ""; position: absolute; left: 17px; top: 18px; bottom: 18px; width: 2px; background: linear-gradient(var(--blue), var(--cyan)); opacity: .5; }
+  .j-step { display: grid; grid-template-columns: 36px minmax(0,1fr); gap: 14px; align-items: start; padding: 10px 0; text-decoration: none; color: inherit; position: relative; }
+  .j-num { width: 36px; height: 36px; border-radius: 50%; background: var(--bg); border: 2px solid var(--blue); display: flex; align-items: center; justify-content: center;
+    font-family: 'Sora', sans-serif; font-weight: 700; font-size: 14px; color: var(--blue); }
+  .j-step b { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 600; display: block; padding-top: 6px; }
+  .j-txt { display: block; }
+  .j-txt span { font-size: 14px; color: var(--text2); line-height: 1.5; display: block; margin-top: 2px; }
+  .side { margin-top: 10px; display: flex; gap: 12px; align-items: center; padding: 13px 14px; border: 1px dashed var(--border); border-radius: 12px; text-decoration: none; color: inherit; }
+  .side b { font-family: 'Sora', sans-serif; font-size: 14.5px; }
+  .side span { font-size: 13.5px; color: var(--text2); }
+
+  /* mood */
+  .mood-word { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; }
+  .mood-lead { font-size: 13px; color: var(--text3); margin: 2px 0 14px; }
+  .emo-row { display: grid; grid-template-columns: 92px minmax(0,1fr) 30px; gap: 10px; align-items: center; margin: 9px 0; font-size: 13.5px; color: var(--text2); }
+  .emo-track { display: block; height: 9px; border-radius: 100px; background: var(--panel2); overflow: hidden; }
+  .emo-fill { display: block; height: 100%; border-radius: 100px; width: 0; transition: width .9s cubic-bezier(.2,.8,.2,1); }
+  .emo-row b { font-family: 'Sora', sans-serif; font-size: 13.5px; text-align: right; color: var(--text1); }
+  .emo-note { font-size: 12px; color: var(--text3); margin-top: 10px; }
+  .sec-pair { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-soft); }
+  .chip { font-size: 13px; padding: 7px 11px; border-radius: 100px; background: var(--bg); border: 1px solid var(--border-soft); color: var(--text2); }
+  .chip b { font-family: 'Sora', sans-serif; }
+  .chip .pos { color: var(--green); } .chip .neg { color: var(--red); }
+  @media (prefers-reduced-motion: reduce) { .emo-fill { transition: none; } }
+
+  /* drill-down */
+  .nest { border: 1px solid var(--border); border-radius: 16px; padding: 14px 14px 14px; background: var(--panel); }
+  .nest .nest { background: var(--bg); margin-top: 12px; border-radius: 13px; }
+  .nest .nest .nest { background: var(--panel); border-color: var(--blue); }
+  .n-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .n-top small { display: block; font-size: 11.5px; color: var(--text3); }
+  .n-top b { font-family: 'Sora', sans-serif; font-size: 15px; font-weight: 600; }
+  .n-top .v { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 15px; color: var(--red); white-space: nowrap; }
+
+  /* stock preview */
+  .sp-head { display: flex; align-items: center; gap: 14px; }
+  .sp-badge { flex: none; width: 60px; height: 60px; border-radius: 50%; border: 3px solid var(--blue); background: var(--accent-soft);
+    display: flex; align-items: center; justify-content: center; font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; }
+  .sp-head b { font-family: 'Sora', sans-serif; font-size: 16px; } .sp-head small { display: block; font-size: 13px; color: var(--blue); font-weight: 600; margin-top: 2px; }
+  .subs { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; margin-top: 14px; }
+  .subs div { background: var(--bg); border: 1px solid var(--border-soft); border-radius: 11px; padding: 9px; }
+  .subs span { font-size: 11.5px; color: var(--text2); display: block; }
+  .subs b { font-family: 'Sora', sans-serif; font-size: 17px; display: block; margin-top: 2px; }
+  .subs i { display: block; height: 4px; border-radius: 4px; background: var(--panel2); margin-top: 6px; overflow: hidden; }
+  .subs i::after { content: ""; display: block; height: 100%; width: var(--w); background: var(--c); border-radius: 4px; }
+  .pop-mock { margin-top: 14px; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; background: var(--bg); box-shadow: var(--shadow); }
+  .pop-mock .pm-h { background: var(--head-grad); padding: 12px 14px 14px; font-family: 'Sora', sans-serif; font-weight: 600; font-size: 15px; color: var(--head-text); }
+  .pop-mock .pm-b { padding: 4px 14px 14px; }
+  .pm-l { font-size: 11.5px; font-weight: 600; color: var(--text3); margin: 10px 0 4px; }
+  .pm-b p { font-size: 13.5px; line-height: 1.55; margin: 0; color: var(--text1); }
+  .pm-f { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 12px; background: var(--panel2); border: 1px solid var(--border-soft); border-radius: 9px; padding: 8px 10px; margin-top: 6px; white-space: pre-wrap; color: var(--text1); }
+  .tap-hint { font-size: 13px; color: var(--text3); margin-top: 14px; }
+  .tap-hint u { text-decoration: underline dotted var(--text4); text-underline-offset: 3px; color: var(--text2); }
+
+  /* backtest */
+  .bt-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; font-size: 13px; color: var(--text3); }
+  .bt-top b { font-family: 'Sora', sans-serif; font-size: 15px; color: var(--text1); }
+  .bt-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-top: 12px; }
+  .bt-grid div { background: var(--bg); border: 1px solid var(--border-soft); border-radius: 11px; padding: 10px 12px; }
+  .bt-grid span { font-size: 12px; color: var(--text2); display: block; }
+  .bt-grid b { font-family: 'Sora', sans-serif; font-size: 18px; display: block; margin-top: 2px; }
+  .bt-grid .pos { color: var(--green); }
+  .bt-note { font-size: 13px; color: var(--text2); line-height: 1.5; margin-top: 12px; padding: 10px 12px; background: var(--accent-soft); border-radius: 10px; }
+
+  /* study */
+  .lesson { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .lesson small { display: block; font-size: 12px; color: var(--text3); }
+  .lesson b { font-family: 'Sora', sans-serif; font-size: 16px; }
+  .pts { flex: none; font-family: 'Sora', sans-serif; font-weight: 700; font-size: 13px; color: var(--green); background: color-mix(in srgb, var(--green) 12%, transparent); border-radius: 100px; padding: 6px 11px; }
+
+  /* pricing */
+  .tiers { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+  .tier { border: 1px solid var(--border); border-radius: 16px; padding: 16px; background: var(--panel); }
+  .tier.core { border: 2px solid var(--blue); }
+  .tier h3 { font-size: 17px; font-weight: 600; display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+  .tier h3 small { font-family: 'Inter Tight', sans-serif; font-size: 11.5px; font-weight: 500; color: var(--text3); }
+  .tier p { font-size: 13px; color: var(--text2); margin: 6px 0 10px; line-height: 1.45; }
+  .tier ul { margin: 0; padding-left: 18px; }
+  .tier li { font-size: 13px; color: var(--text1); line-height: 1.5; margin-bottom: 5px; }
+  .final { text-align: center; margin-top: 56px; padding: 30px 18px; border-radius: 18px; background: var(--head-grad); }
+  .final h2 { font-size: 24px; font-weight: 600; color: var(--head-text); }
+  .final p { color: var(--head-text); opacity: .9; font-size: 14.5px; margin: 8px 0 18px; }
+  .final .btn.primary { background: #fff; color: #0B1C33; }
+  :root[data-mode="dark"] .final .btn.primary { background: var(--blue); color: #fff; }
+  footer { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--border-soft); font-size: 12px; color: var(--text4); line-height: 1.55; text-align: center; }
+  footer .links { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 10px; }
+  footer .links a { color: var(--text3); text-decoration: none; }
+
+  @media (max-width: 640px) {
+    .tiers { grid-template-columns: minmax(0,1fr); }
+    .subs { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="index.html" aria-label="Trendably home">
+    <svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="mk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0E1A3D"/><stop offset=".6" stop-color="#1D5FD0"/><stop offset="1" stop-color="#2F8CFF"/></linearGradient></defs><rect width="40" height="40" rx="11" fill="url(#mk)"/><rect x="8" y="26" width="3.4" height="8" rx="1" fill="#8FC0FF"/><rect x="14" y="21" width="3.4" height="13" rx="1" fill="#8FC0FF"/><rect x="20" y="24" width="3.4" height="10" rx="1" fill="#8FC0FF"/><rect x="26" y="15" width="3.4" height="19" rx="1" fill="#8FC0FF"/><path d="M6 27L15 19L21 24L34 9" stroke="#21D4F0" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="word">trend<span>ably</span></span>
+      </a>
+  <div class="nav-actions">
+    <button class="menu-btn" id="themeBtn" type="button" aria-label="Switch light or dark">
+      <svg class="t-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      <svg class="t-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
+    </button>
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Open navigation">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="nav-drawer" id="navDrawer">
+  <div class="scrim" id="navScrim"></div>
+  <div class="panel">
+    <h3>Trendably</h3>
+    <a href="index.html" class="current"><span class="pg-dot"></span>Home</a>
+    <a href="market-weather.html"><span class="pg-dot"></span>Market Weather</a>
+    <a href="the-grid.html"><span class="pg-dot"></span>The Grid</a>
+    <a href="stock-detail.html"><span class="pg-dot"></span>Stock Detail</a>
+    <a href="strategy-lab.html"><span class="pg-dot"></span>Strategy Lab</a>
+    <a href="study-room.html"><span class="pg-dot"></span>Study Room</a>
+  </div>
+</div>
+
+<div class="mkt-strip">
+  <span>S&amp;P 500 <b class="pos">+0.8%</b></span>
+  <span>NASDAQ <b class="pos">+1.1%</b></span>
+  <span>VIX <b class="pos">14.8</b></span>
+  <span>NVDA <b class="neg">−2.2%</b></span>
+  <span>10Y Yield <b>4.18%</b></span>
+</div>
+<main class="wrap">
+
+  <section class="hero">
+    <h1>Read the market. <span class="second">Then test your move.</span></h1>
+    <p>Trendably follows the S&amp;P 500 from today's mood down to a single stock — and lets you backtest any strategy on it before you put money on the line.</p>
+    <div class="cta-row">
+      <a class="btn primary" href="#pricing">Start free</a>
+      <a class="btn ghost" href="market-weather.html">See today's market</a>
+    </div>
+    <div class="fine">No card required. Full depth on a handful of stocks, free.</div>
+    <div class="today" aria-label="Today at a glance">
+      <div><span>Market mood</span><b>Cautious</b></div>
+      <div><span>S&amp;P 500</span><b class="pos">+0.8%</b></div>
+      <div><span>Energy leads</span><b class="pos">+1.8%</b></div>
+    </div>
+  </section>
+
+  <section class="blk">
+    <h2>One path, from the big picture to your next move.</h2>
+    <p>Each page answers one question, then hands you to the next.</p>
+    <ol class="journey">
+      <li><a class="j-step" href="market-weather.html"><span class="j-num">1</span><span class="j-txt"><b>Market Weather</b><span>How does the market feel today, and which sectors are moving?</span></span></a></li>
+      <li><a class="j-step" href="the-grid.html"><span class="j-num">2</span><span class="j-txt"><b>The Grid</b><span>Which strategies have worked on which stocks?</span></span></a></li>
+      <li><a class="j-step" href="stock-detail.html?sym=NVDA"><span class="j-num">3</span><span class="j-txt"><b>Stock Detail</b><span>What's pushing this stock's score up — and what's holding it back?</span></span></a></li>
+      <li><a class="j-step" href="strategy-lab.html"><span class="j-num">4</span><span class="j-txt"><b>Strategy Lab</b><span>What happens if I change the settings?</span></span></a></li>
+    </ol>
+    <a class="side" href="study-room.html"><span><b>Study Room</b> <span>— alongside every step, short lessons whenever a term is new.</span></span></a>
+  </section>
+
+  <section class="blk">
+    <h2>Four feelings, not one verdict.</h2>
+    <p>Market Weather scores fear, uncertainty, optimism and confidence separately — so you see the mix behind the mood, and which sectors are carrying it.</p>
+    <div class="card">
+      <div class="section-head"><h2>What's in the mood</h2></div>
+      <div class="mood-word">Cautious</div>
+      <div class="mood-lead">Uncertainty leads today.</div>
+      <div class="emo-row"><span>Uncertainty</span><span class="emo-track"><span class="emo-fill" data-w="64" style="background:var(--emo-unc)"></span></span><b>64</b></div>
+      <div class="emo-row"><span>Fear</span><span class="emo-track"><span class="emo-fill" data-w="48" style="background:var(--emo-fear)"></span></span><b>48</b></div>
+      <div class="emo-row"><span>Optimism</span><span class="emo-track"><span class="emo-fill" data-w="41" style="background:var(--emo-opt)"></span></span><b>41</b></div>
+      <div class="emo-row"><span>Confidence</span><span class="emo-track"><span class="emo-fill" data-w="35" style="background:var(--emo-conf)"></span></span><b>35</b></div>
+      <div class="emo-note">Each feeling is scored on its own, 0–100, so they don't add up to 100.</div>
+      <div class="sec-pair"><span class="chip">Energy <b class="pos">+1.8%</b></span><span class="chip">Information Technology <b class="neg">−1.4%</b></span></div>
+    </div>
+    <a class="more" href="market-weather.html">Open Market Weather <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </section>
+
+  <section class="blk">
+    <h2>Zoom in without losing the thread.</h2>
+    <p>Open a sector, then its industries, then a single stock. The same measures repeat at every level, so the numbers always add up.</p>
+    <div class="nest">
+      <div class="n-top"><span><small>Sector</small><b>Information Technology</b></span><span class="v">−1.4%</span></div>
+      <div class="nest">
+        <div class="n-top"><span><small>Industry</small><b>Semiconductors</b></span><span class="v">−2.1%</span></div>
+        <div class="nest">
+          <div class="n-top"><span><small>Stock</small><b>NVDA · NVIDIA</b></span><span class="v">−2.2%</span></div>
+        </div>
+      </div>
+    </div>
+    <a class="more" href="sector-technology.html">Explore a sector <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </section>
+
+  <section class="blk">
+    <h2>Every stock, explained.</h2>
+    <p>Each stock gets one score built from four named drivers. Tap any term and its meaning — and the maths behind it — opens right where you are.</p>
+    <div class="card">
+      <div class="sp-head"><span class="sp-badge">69</span><span><b>NVDA</b><small>Solid composite score</small></span></div>
+      <div class="subs">
+        <div><span>Momentum</span><b style="color:var(--green)">85</b><i style="--w:85%;--c:var(--green)"></i></div>
+        <div><span>Risk</span><b>54</b><i style="--w:54%;--c:var(--sky)"></i></div>
+        <div><span>Valuation</span><b style="color:var(--red)">29</b><i style="--w:29%;--c:var(--red)"></i></div>
+        <div><span>Fundamentals</span><b style="color:var(--green)">88</b><i style="--w:88%;--c:var(--green)"></i></div>
+      </div>
+      <div class="tap-hint">You tap <u>RSI (14-day)</u> and this opens:</div>
+      <div class="pop-mock" aria-hidden="true">
+        <div class="pm-h">RSI — Relative Strength Index</div>
+        <div class="pm-b">
+          <div class="pm-l">In plain words</div>
+          <p>Compares recent gains with recent losses, from 0 to 100. Above 70 is often read as stretched. NVDA is at 64.</p>
+          <div class="pm-l">How it's calculated</div>
+          <div class="pm-f">RSI = 100 − 100 ÷ (1 + avg gain ÷ avg loss)</div>
+        </div>
+      </div>
+    </div>
+    <a class="more" href="stock-detail.html?sym=NVDA">See a full stock profile <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </section>
+
+  <section class="blk">
+    <h2>Test before you trust.</h2>
+    <p>Pick a stock and a strategy, move the settings, and the backtest reruns on the spot — always beside simply buying and holding.</p>
+    <div class="card">
+      <div class="section-head"><h2>Backtest</h2></div>
+      <div class="bt-top"><span>NVDA with MACD, past year</span><b>20 trades</b></div>
+      <div class="bt-grid">
+        <div><span>Strategy return</span><b class="pos">+48.5%</b></div>
+        <div><span>Buy and hold</span><b class="pos">+58.7%</b></div>
+        <div><span>Win rate</span><b>55%</b></div>
+        <div><span>Max drawdown</span><b>−34.1%</b></div>
+      </div>
+      <div class="bt-note">Here, simply holding did better. We show that too — that's the point of testing.</div>
+    </div>
+    <a class="more" href="strategy-lab.html">Open Strategy Lab <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </section>
+
+  <section class="blk">
+    <h2>Learn as you go.</h2>
+    <p>Short lessons tied to the numbers you're looking at. Pass a quick quiz the first time and earn points.</p>
+    <div class="card">
+      <div class="lesson"><span><small>Practitioner · Measuring risk</small><b>Drawdown</b></span><span class="pts">+50 points</span></div>
+    </div>
+    <a class="more" href="study-room.html">Visit the Study Room <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </section>
+
+  <section class="blk" id="pricing">
+    <h2>Start where you are.</h2>
+    <p>No trial countdown. The free tier is real depth on real stocks.</p>
+    <div class="tiers">
+      <div class="tier"><h3>Free</h3><p>A handful of stocks, full depth, no card.</p>
+        <ul><li>Full Stock Detail breakdown</li><li>Every strategy, on sample stocks</li><li>Study Room basics</li></ul></div>
+      <div class="tier core"><h3>Core</h3><p>The whole S&amp;P 500, every strategy.</p>
+        <ul><li>The full Grid</li><li>Market Weather, sectors and industries</li><li>Strategy Lab on any stock</li></ul></div>
+      <div class="tier"><h3>Premium <small>Coming soon</small></h3><p>Practise with fake money, learn it all.</p>
+        <ul><li>Demo trading</li><li>Full Study Room, quizzes included</li><li>Everything in Core</li></ul></div>
+    </div>
+  </section>
+
+  <section class="final">
+    <h2>Read the market. Then test your move.</h2>
+    <p>Free to start. No card needed.</p>
+    <a class="btn primary" href="#pricing">Start free</a>
+  </section>
+
+  <footer>
+    <div class="links"><a href="market-weather.html">Market Weather</a><a href="the-grid.html">The Grid</a><a href="stock-detail.html">Stock Detail</a><a href="strategy-lab.html">Strategy Lab</a><a href="study-room.html">Study Room</a></div>
+    Figures shown are illustrative samples. Backtested performance is historical and not a promise of future results. Trendably provides analysis, not investment advice.
+  </footer>
+</main>
+<script>
+(function(){
+  var root=document.documentElement;
+  try{ var s=localStorage.getItem('tb-mode'); if(s) root.setAttribute('data-mode',s);}catch(e){}
+  document.getElementById('themeBtn').addEventListener('click',function(){
+    var d=root.getAttribute('data-mode')==='dark'; root.setAttribute('data-mode',d?'light':'dark');
+    try{localStorage.setItem('tb-mode',d?'light':'dark');}catch(e){}
+  });
+  var nd=document.getElementById('navDrawer');
+  document.getElementById('menuBtn').addEventListener('click',function(){nd.classList.add('open');});
+  document.getElementById('navScrim').addEventListener('click',function(){nd.classList.remove('open');});
+  // The one load moment: mood bars fill when they come into view
+  var fills=[].slice.call(document.querySelectorAll('.emo-fill'));
+  function fill(){ fills.forEach(function(f){ f.style.width=f.getAttribute('data-w')+'%'; }); }
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){ es.forEach(function(e){ if(e.isIntersecting){ fill(); io.disconnect(); } }); },{threshold:.3});
+    io.observe(fills[0].closest('.card'));
+  } else fill();
+})();
+</script>
+</body>
+</html>

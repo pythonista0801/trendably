@@ -1,0 +1,210 @@
+{
+  "id": "foundations/market-as-a-whole/what-an-index-is",
+  "tier": {
+    "id": "foundations",
+    "title": "Foundations"
+  },
+  "chapter": {
+    "id": "market-as-a-whole",
+    "title": "The market as a whole"
+  },
+  "number": 1,
+  "lessonsInChapter": 4,
+  "minutes": 12,
+  "title": "What an index is",
+  "intro": "Five short ideas that let you read the S&P 500 figure on every Trendably page without guessing. Read top to bottom; each ends with one question.",
+  "concepts": [
+    {
+      "title": "What an index measures",
+      "read": [
+        "An index is one number that sums up how a whole group of stocks is doing. Instead of checking 500 prices, you check one.",
+        "When the news says “the market fell today”, it almost always means an index fell."
+      ],
+      "aside": "Think of a class average: it tells you how the class did, not how any one student did.",
+      "snapshot": {
+        "type": "strip",
+        "where": "Market Weather · top strip",
+        "caption": "Each name in this strip is an index. The S&P 500 is the one Trendably is built around."
+      },
+      "mistake": "An index isn’t something you can own. It’s a measurement, like a temperature reading. To invest in what it tracks, people buy a fund built to copy it — that’s Lesson 3.",
+      "question": {
+        "prompt": "A friend says, “The S&P 500 dropped 1% today.” What actually happened?",
+        "options": [
+          {
+            "text": "Every one of the 500 companies lost about 1%.",
+            "feedback": "An index is a summary. On a day it falls 1%, plenty of its companies can still rise."
+          },
+          {
+            "text": "The combined value of a large group of US companies fell by about 1%.",
+            "feedback": "Right. The index sums up the whole group in one number, so a 1% drop describes the group, not each company.",
+            "correct": true
+          },
+          {
+            "text": "A company called S&P lost 1% of its value.",
+            "feedback": "S&P is the firm that maintains the index. The index measures other companies, not S&P itself."
+          },
+          {
+            "text": "Shares of the S&P 500 in your account are now worth 1% less.",
+            "feedback": "You can’t hold the index itself. You can hold a fund that copies it, which comes later in this chapter."
+          }
+        ]
+      },
+      "explore": [
+        "Why not just average the 500 share prices?",
+        "Who decides what an index measures?"
+      ]
+    },
+    {
+      "title": "What the S&P 500 represents",
+      "read": [
+        "The S&P 500 follows about 500 of the largest companies listed in the United States. Together they make up roughly 80% of the value of the whole US stock market, which is why it’s the usual stand-in for “the market”.",
+        "A committee chooses the members using rules about size, profits and how easily the shares trade, and swaps companies in and out over time."
+      ],
+      "snapshot": {
+        "type": "grid",
+        "where": "The Grid · header",
+        "caption": "Every sector and stock you open in the Grid is a slice of the S&P 500."
+      },
+      "mistake": "It isn’t simply “the 500 biggest companies”, and it isn’t the whole economy. Private companies, smaller companies and most foreign ones aren’t in it.",
+      "question": {
+        "prompt": "A well-known private company, not listed on any stock exchange, doubles in value. What happens to the S&P 500?",
+        "options": [
+          {
+            "text": "It rises, since the index follows the US economy.",
+            "feedback": "The index follows large listed companies, not the economy as a whole. A private company isn’t part of it."
+          },
+          {
+            "text": "It rises, because fast-growing companies are added automatically.",
+            "feedback": "Changes are made by a committee under set rules, and a company has to be publicly listed to qualify."
+          },
+          {
+            "text": "Nothing directly — only companies whose shares trade publicly are in the index.",
+            "feedback": "Right. A company has to be listed, and chosen, before its value can move the index.",
+            "correct": true
+          }
+        ]
+      },
+      "explore": [
+        "How does a company get added or removed?",
+        "Is the S&P 500 the same as the Dow?"
+      ]
+    },
+    {
+      "title": "Why big companies count more",
+      "read": [
+        "Companies don’t all count the same. Each one counts in proportion to its market value: share price times the number of shares. This is called market-cap weighting.",
+        "A company worth $3 trillion moves the index far more than one worth $30 billion. Group them by sector and it shows clearly: Information Technology alone is about {{sector:Information Technology.weight}}% of the S&P 500."
+      ],
+      "snapshot": {
+        "type": "weights",
+        "where": "Market Weather · sector weights",
+        "caption": "Each bar is a sector’s share of the index. The top two sectors carry {{top2.weight}}% of it."
+      },
+      "mistake": "A big jump in a small company barely registers. A small move in a giant can move the whole index.",
+      "question": {
+        "prompt": "Two companies each rise 10% today. One is worth $2 trillion, the other $20 billion. Which nudges the S&P 500 more?",
+        "options": [
+          {
+            "text": "Both the same — they rose by the same percentage.",
+            "feedback": "That would be true if every company counted equally. In the S&P 500, bigger companies carry more weight."
+          },
+          {
+            "text": "The $2 trillion company — it carries about a hundred times more weight.",
+            "feedback": "Right. Same percentage move, but a hundred times the weight, so a hundred times the effect on the index.",
+            "correct": true
+          },
+          {
+            "text": "The smaller one, because small companies swing the index more.",
+            "feedback": "Small companies often swing more themselves, but their weight is tiny, so their effect on the index is small."
+          }
+        ]
+      },
+      "explore": [
+        "Are there indexes where every company counts equally?",
+        "What does market cap actually mean?"
+      ]
+    },
+    {
+      "title": "Points and percent",
+      "read": [
+        "Index moves are reported two ways: in points, the change in the number itself, and in percent.",
+        "Points depend on how high the index already is, so they’re hard to compare over time. Percent is the fair comparison. A 60-point fall is about 1% with the index near 6,000, but was about 15% in the early 1990s, when the index sat near 400."
+      ],
+      "snapshot": {
+        "type": "quote",
+        "where": "Stock Detail and Market Weather · index quote",
+        "caption": "Across Trendably, moves are shown in percent so different days can be compared fairly."
+      },
+      "mistake": "Headlines like “biggest point drop ever” can sound worse than they are. Check the percent before reacting.",
+      "question": {
+        "prompt": "Day A: the index falls 40 points from 2,000. Day B: it falls 60 points from 6,000. Which was the bigger move?",
+        "options": [
+          {
+            "text": "Day B — it lost more points.",
+            "feedback": "More points, but from a much higher level. 60 out of 6,000 is 1%."
+          },
+          {
+            "text": "They were about the same.",
+            "feedback": "Work out each as a share of where the index started: 40 of 2,000 versus 60 of 6,000."
+          },
+          {
+            "text": "Day A — it fell about 2%, twice as much as Day B.",
+            "feedback": "Right. 40 out of 2,000 is 2%; 60 out of 6,000 is 1%. Fewer points, bigger move.",
+            "correct": true
+          }
+        ]
+      },
+      "explore": [
+        "Why is the index number itself so high?",
+        "How do I work out a percent change?"
+      ]
+    },
+    {
+      "title": "One number, many different days",
+      "read": [
+        "Because an index is a weighted total, it can hide a lot. Today the S&P 500 moved {{index.moveSigned}}%, yet some sectors rose while others fell harder.",
+        "In today’s data, {{best.name}} moved {{best.moveSigned}}% while {{largest.name}} moved {{largest.moveSigned}}%. Because {{largest.name}} is the largest sector, its move weighs most on the index."
+      ],
+      "snapshot": {
+        "type": "moves",
+        "where": "Market Weather · today’s sector moves",
+        "caption": "{{count.down}} sectors fell and {{count.up}} rose, yet the single number at the bottom is all most headlines report."
+      },
+      "mistake": "“The market was down” doesn’t mean your stock was down. Look beneath the index before drawing conclusions.",
+      "question": {
+        "prompt": "The index closes slightly lower. What can you safely conclude?",
+        "options": [
+          {
+            "text": "The weighted total of its companies fell — individual stocks and sectors may still have risen.",
+            "feedback": "Right. That’s all one index number can tell you; the detail lives underneath it.",
+            "correct": true
+          },
+          {
+            "text": "Most of the companies in it fell.",
+            "feedback": "Not necessarily. A few very large companies falling can outweigh many smaller ones rising."
+          },
+          {
+            "text": "Every sector fell, just by different amounts.",
+            "feedback": "Sectors can move in opposite directions on the same day, as the snapshot above shows."
+          }
+        ]
+      },
+      "explore": [
+        "Where in Trendably do I look beneath the index?",
+        "Can the index rise while most stocks fall?"
+      ]
+    }
+  ],
+  "recap": [
+    "An index is one number that summarises a group of stocks. It’s a measurement, not something you own.",
+    "The S&P 500 covers about 500 large US-listed companies, roughly 80% of US market value.",
+    "Bigger companies count more, in proportion to their market value.",
+    "Compare index moves in percent, not points.",
+    "One index number can hide very different moves underneath."
+  ],
+  "next": {
+    "id": "foundations/market-as-a-whole/sectors-and-industries",
+    "title": "Sectors and industries"
+  },
+  "tutorContext": "Elsewhere in this chapter: sectors and industries are Lesson 2; ETFs and index funds are Lesson 3. If a question belongs there, give a short honest answer and say where it is covered."
+}

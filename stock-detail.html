@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="en" data-mode="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>NVDA · Stock Detail · Trendably</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Light mode (default) */
+    --bg: #FFFFFF;
+    --panel: #F4F9FE;
+    --panel2: #EAF3FC;
+    --border: #C9DCF2;
+    --border-soft: #DCE9F8;
+    --text1: #0B1C33;
+    --text2: #33547A;
+    --text3: #5A7699;
+    --text4: #8CA0BC;
+    --blue: #1C6FE0;
+    --cyan: #0EA5C4;
+    --green: #0E9F6E;
+    --red: #D23A58;
+    --head-grad: linear-gradient(180deg, rgba(28,111,224,0.92) 0%, rgba(14,165,196,0.5) 65%, rgba(255,255,255,0) 100%);
+    --head-text: #FFFFFF;
+    --nav-grad: linear-gradient(180deg, rgba(28,111,224,0.45) 0%, rgba(14,165,196,0.16) 65%, rgba(255,255,255,0.02) 100%);
+    --accent-soft: rgba(28,111,224,0.07);
+    --shadow: 0 12px 28px rgba(11,28,51,0.12);
+    --strip-bg: #F4F9FE;
+    --sky: #6FA8E8;
+    color-scheme: light;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  :root[data-mode="dark"] {
+    --bg: #05080E;
+    --panel: #0D1420;
+    --panel2: #121A27;
+    --border: #2A3850;
+    --border-soft: #1C2636;
+    --text1: #F3F6FB;
+    --text2: #B7C0D1;
+    --text3: #8593A8;
+    --text4: #5B6472;
+    --blue: #2F8CFF;
+    --cyan: #21D4F0;
+    --green: #2EE6A6;
+    --red: #FF5577;
+    --head-grad: linear-gradient(180deg, rgba(47,140,255,0.30) 0%, rgba(33,212,240,0.10) 70%, rgba(13,20,32,0) 100%);
+    --head-text: #EAF2FF;
+    --nav-grad: linear-gradient(180deg, rgba(47,140,255,0.16) 0%, rgba(33,212,240,0.05) 65%, rgba(5,8,14,0) 100%);
+    --accent-soft: rgba(47,140,255,0.12);
+    --shadow: 0 16px 34px rgba(0,0,0,0.5);
+    --strip-bg: #0A111C;
+    --sky: #8FC0FF;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0; background: var(--bg); color: var(--text1);
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 780px; margin: 0 auto; padding: 0 18px 72px; }
+  .card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 20px; margin-bottom: 16px;
+  }
+  h1, h2, h3 { font-family: 'Sora', sans-serif; margin: 0; letter-spacing: -0.02em; }
+  .caveat { font-size: 12px; color: var(--text4); line-height: 1.5; }
+  button { font-family: inherit; cursor: pointer; }
+  a { color: inherit; }
+  .hint-link {
+    display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; color: var(--blue);
+    text-decoration: none; background: none; border: none; padding: 0; font-family: inherit;
+  }
+  .hint-link svg { flex: none; }
+  .hint-row {
+    display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 18px; padding: 12px 14px;
+    background: var(--accent-soft); border: 1px solid var(--border); border-radius: 10px;
+  }
+
+  /* ---------- Nav ---------- */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 18px; border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; top: env(safe-area-inset-top, 0px);
+    background: var(--nav-grad);
+    backdrop-filter: blur(10px); z-index: 20;
+  }
+  .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+  .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px rgba(14,165,196,0.5); }
+  .back { font-size: 13px; color: var(--text3); text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .brand .logo { width: 28px; height: 28px; flex: none; }
+  .word { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: -0.02em; color: var(--text1); }
+  .word span { background: linear-gradient(90deg, var(--blue), var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .page-tag { font-size: 12.5px; color: var(--text3); padding-left: 10px; margin-left: 2px; border-left: 1px solid var(--border); }
+  .nav-actions { display: flex; align-items: center; gap: 8px; }
+  .t-sun { display: none; }
+  :root[data-mode="dark"] .t-sun { display: block; }
+  :root[data-mode="dark"] .t-moon { display: none; }
+
+
+  .menu-btn {
+    width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--border-soft); background: none;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text2); flex: none;
+  }
+  .menu-btn svg { width: 16px; height: 16px; }
+
+  .nav-drawer {
+    position: fixed; inset: 0; z-index: 50; visibility: hidden;
+  }
+  .nav-drawer.open { visibility: visible; }
+  .nav-drawer .scrim {
+    position: absolute; inset: 0; background: rgba(5,8,14,0.45);
+    opacity: 0; transition: opacity 0.2s ease;
+  }
+  .nav-drawer.open .scrim { opacity: 1; }
+  .nav-drawer .panel {
+    position: absolute; top: 0; right: 0; bottom: 0; width: 78%; max-width: 300px;
+    background: var(--panel); border-left: 1px solid var(--border-soft);
+    padding: 20px 18px; transform: translateX(100%); transition: transform 0.25s ease;
+    box-shadow: var(--shadow);
+  }
+  .nav-drawer.open .panel { transform: translateX(0); }
+  .nav-drawer .panel h3 { font-family: 'Sora', sans-serif; font-size: 13px; color: var(--text3); font-weight: 600; margin: 0 0 14px; }
+  .nav-drawer .panel a {
+    display: flex; align-items: center; gap: 10px; padding: 11px 10px; border-radius: 9px;
+    color: var(--text1); text-decoration: none; font-size: 14px; font-weight: 500; margin-bottom: 2px;
+  }
+  .nav-drawer .panel a.current { background: var(--accent-soft); color: var(--blue); font-weight: 600; }
+  .nav-drawer .panel a .pg-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex: none; }
+  .nav-drawer .panel a.current .pg-dot { background: var(--blue); }
+
+  .page-head { text-align: center; padding: 26px 20px 6px; }
+  .page-head h1 { font-size: 22px; font-weight: 600; max-width: 22ch; margin: 0 auto; }
+  .page-head p { font-size: 14px; color: var(--text2); max-width: 440px; margin: 10px auto 0; line-height: 1.55; }
+
+  .section-head {
+    display: flex; align-items: baseline; justify-content: space-between; margin: -20px -20px 16px; padding: 15px 20px;
+    border-radius: 15px 15px 0 0;
+    background: var(--head-grad);
+  }
+  .section-head h2 { font-size: 17px; font-weight: 600; color: var(--head-text); }
+  .section-sub { font-size: 12.5px; color: var(--text3); margin: 4px 0 16px; line-height: 1.5; }
+
+  /* ---------- Shared header: market strip + pick-a-stock search ---------- */
+  .mkt-strip {
+    display: flex; gap: 20px; overflow-x: auto; -webkit-overflow-scrolling: touch;
+    padding: 9px 18px; background: var(--strip-bg); border-bottom: 1px solid var(--border-soft);
+    font-size: 12px; color: var(--text3); white-space: nowrap; scrollbar-width: none;
+  }
+  .mkt-strip::-webkit-scrollbar { display: none; }
+  .mkt-strip b { font-weight: 600; }
+  .mkt-strip .pos { color: var(--green); } .mkt-strip .neg { color: var(--red); }
+  .pick-stock-bar {
+    display: flex; align-items: center; gap: 9px; padding: 12px 18px;
+    background: var(--panel2); border-bottom: 1px solid var(--border);
+  }
+  .pick-stock-bar svg { flex: none; color: var(--text4); }
+  .pick-stock-bar input {
+    flex: 1; background: none; border: none; outline: none; color: var(--text1);
+    font-size: 13.5px; font-family: inherit;
+  }
+  .pick-stock-bar input::placeholder { color: var(--text4); }
+
+  
+  .crumbs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font-size: 12.5px; color: var(--text3); padding: 18px 2px 0; }
+  .crumbs a { color: var(--blue); text-decoration: none; }
+  .crumbs > * { white-space: nowrap; }
+
+  .crumbs { padding-bottom: 14px; }
+
+  /* ---------- Header card ---------- */
+  .stock-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
+  .stock-id .tk { font-family: 'Sora', sans-serif; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+  .stock-id .nm { font-size: 13px; color: var(--text3); margin-top: 2px; }
+  .price-block { text-align: right; }
+  .price-block .px { font-family: 'Sora', sans-serif; font-size: 23px; font-weight: 700; }
+  .price-block .chg { font-size: 12.5px; font-weight: 600; margin-top: 3px; }
+  .chg.pos { color: var(--green); } .chg.neg { color: var(--red); }
+  .verdict-row { display: flex; align-items: center; gap: 14px; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--border-soft); }
+  .score-badge {
+    flex: none; width: 66px; height: 66px; border-radius: 50%; border: 3px solid var(--blue);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: var(--accent-soft); cursor: pointer; padding: 0; color: var(--text1);
+  }
+  .score-badge .n { font-family: 'Sora', sans-serif; font-size: 21px; font-weight: 700; line-height: 1; }
+  .score-badge .d { font-size: 9px; color: var(--text3); margin-top: 2px; }
+  .verdict-text { flex: 1; min-width: 0; }
+  .verdict-text .tag { font-family: 'Sora', sans-serif; font-size: 13.5px; font-weight: 600; color: var(--blue); }
+  .verdict-text p { font-size: 13.5px; color: var(--text2); line-height: 1.55; margin: 4px 0 0; }
+
+  /* ---------- Sub-scores ---------- */
+  .subscore-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 9px; }
+  .subscore-card { background: var(--bg); border: 1px solid var(--border-soft); border-radius: 12px; padding: 11px 10px; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+  .subscore-card .sl { font-size: 12px; color: var(--text2); font-weight: 500; }
+  .subscore-card .sv { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; margin-top: 4px; }
+  .subscore-card .bar-track { height: 5px; border-radius: 100px; background: var(--panel2); margin-top: 8px; overflow: hidden; }
+  .subscore-card .bar-fill { height: 100%; border-radius: 100px; }
+  .subscore-card .st { font-size: 11px; color: var(--text3); margin-top: 6px; }
+
+  /* ---------- Indicator groups ---------- */
+  .section-head .step { font-size: 11.5px; font-weight: 600; color: var(--head-text); opacity: .8; }
+  .ind-row { padding: 12px 0; border-top: 1px solid var(--border-soft); }
+  .ind-row:first-child { border-top: none; padding-top: 2px; }
+  .ind-main { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .ind-value { font-family: 'Sora', sans-serif; font-size: 14.5px; font-weight: 700; white-space: nowrap; color: var(--text1); }
+  .ind-value.pos { color: var(--green); } .ind-value.neg { color: var(--red); }
+  .ind-meaning { font-size: 12.5px; color: var(--text3); line-height: 1.5; margin-top: 4px; max-width: 56ch; }
+  .learn-link { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; color: var(--blue); background: none; border: none; padding: 0; margin-top: 6px; font-weight: 500; }
+  .learn-link svg { flex: none; }
+  .term { background: none; border: none; padding: 0; font: inherit; font-size: 13.5px; color: var(--text2); text-align: left;
+    text-decoration: underline dotted var(--text4); text-underline-offset: 3px; }
+  .more-wrap { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+  .more-wrap.open { max-height: 1400px; }
+  .see-all-btn { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%;
+    background: none; border: 1px dashed var(--border); border-radius: 10px; padding: 10px;
+    color: var(--text2); font-size: 12.5px; font-weight: 600; margin-top: 12px; }
+  .see-all-btn svg { transition: transform 0.2s ease; }
+  .group-card.expanded .see-all-btn svg { transform: rotate(180deg); }
+
+  /* ---------- Explainer pop-up ---------- */
+  .gl-scrim { position: fixed; inset: 0; background: rgba(5,8,14,0.45); opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 60; }
+  .gl-scrim.open { opacity: 1; pointer-events: auto; }
+  .gl-sheet { position: fixed; left: 50%; bottom: 0; width: min(560px, 100%); max-height: 84vh; max-height: 84dvh;
+    transform: translate(-50%, 104%); transition: transform .3s cubic-bezier(.2,.8,.2,1), visibility 0s linear .3s;
+    background: var(--bg); border: 1px solid var(--border); border-bottom: none; border-radius: 20px 20px 0 0;
+    box-shadow: var(--shadow); z-index: 61; display: flex; visibility: hidden; flex-direction: column; overflow: hidden; }
+  .gl-sheet.open { transform: translate(-50%, 0); visibility: visible; transition: transform .3s cubic-bezier(.2,.8,.2,1), visibility 0s; }
+  .gl-head { flex: none; background: var(--head-grad); padding: 10px 18px 16px; position: relative; }
+  .gl-grip { width: 38px; height: 4px; border-radius: 4px; background: var(--head-text); opacity: .55; margin: 0 auto 12px; }
+  .gl-head h3 { font-size: 19px; font-weight: 600; color: var(--head-text); padding-right: 40px; }
+  .gl-close { position: absolute; top: 18px; right: 14px; width: 32px; height: 32px; border-radius: 50%; border: none;
+    background: rgba(255,255,255,0.18); color: var(--head-text); display: flex; align-items: center; justify-content: center; }
+  .gl-body { overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 6px 18px 22px; padding-bottom: calc(22px + env(safe-area-inset-bottom, 0px)); }
+  .gl-label { font-size: 12px; font-weight: 600; color: var(--text3); margin: 14px 0 6px; }
+  .gl-plain { font-size: 15px; line-height: 1.62; color: var(--text1); margin: 0; }
+  .gl-plain + .gl-plain { margin-top: 10px; }
+  .gl-here { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 14px; padding: 11px 14px;
+    background: var(--panel); border: 1px solid var(--border-soft); border-radius: 12px; font-size: 13.5px; color: var(--text2); }
+  .gl-here b { font-family: 'Sora', sans-serif; font-size: 15px; color: var(--text1); white-space: nowrap; }
+  .gl-calc { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; padding: 14px 16px; }
+  .gl-calc ol { margin: 0; padding-left: 20px; }
+  .gl-calc li { font-size: 13.5px; line-height: 1.6; color: var(--text2); margin-bottom: 6px; }
+  .gl-calc li:last-child { margin-bottom: 0; }
+  .gl-f { font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace; font-size: 12.5px; line-height: 1.6; color: var(--text1);
+    background: var(--panel2); border: 1px solid var(--border-soft); border-radius: 10px; padding: 10px 12px; margin: 10px 0 0; overflow-x: auto; white-space: pre-wrap; }
+  .gl-note { font-size: 12px; color: var(--text4); line-height: 1.5; margin-top: 14px; }
+  .gl-soon { font-size: 13.5px; color: var(--text3); line-height: 1.55; padding: 12px 14px; border: 1px dashed var(--border); border-radius: 12px; }
+  body.gl-lock { overflow: hidden; }
+  @media (min-width: 700px) {
+    .gl-sheet { bottom: auto; top: 50%; border-radius: 20px; border-bottom: 1px solid var(--border); transform: translate(-50%, -46%); opacity: 0; pointer-events: none; transition: transform .25s ease, opacity .2s ease; max-height: 80vh; }
+    .gl-sheet.open { transform: translate(-50%, -50%); opacity: 1; pointer-events: auto; }
+    .gl-grip { display: none; }
+    .gl-head { padding-top: 18px; }
+  }
+  @media (max-width: 560px) { .subscore-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+</style>
+</head>
+<body>
+<nav>
+  <a class="brand" href="index.html" aria-label="Trendably home">
+    <svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="mk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0E1A3D"/><stop offset=".6" stop-color="#1D5FD0"/><stop offset="1" stop-color="#2F8CFF"/></linearGradient></defs><rect width="40" height="40" rx="11" fill="url(#mk)"/><rect x="8" y="26" width="3.4" height="8" rx="1" fill="#8FC0FF"/><rect x="14" y="21" width="3.4" height="13" rx="1" fill="#8FC0FF"/><rect x="20" y="24" width="3.4" height="10" rx="1" fill="#8FC0FF"/><rect x="26" y="15" width="3.4" height="19" rx="1" fill="#8FC0FF"/><path d="M6 27L15 19L21 24L34 9" stroke="#21D4F0" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="word">trend<span>ably</span></span>
+    <span class="page-tag">Stock Detail</span>
+  </a>
+  <div class="nav-actions">
+    <button class="menu-btn" id="themeBtn" type="button" aria-label="Switch light or dark">
+      <svg class="t-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      <svg class="t-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
+    </button>
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Open navigation">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="nav-drawer" id="navDrawer">
+  <div class="scrim" id="navScrim"></div>
+  <div class="panel">
+    <h3>Trendably</h3>
+    <a href="index.html"><span class="pg-dot"></span>Home</a>
+    <a href="market-weather.html"><span class="pg-dot"></span>Market Weather</a>
+    <a href="the-grid.html"><span class="pg-dot"></span>The Grid</a>
+    <a href="stock-detail.html" class="current"><span class="pg-dot"></span>Stock Detail</a>
+    <a href="strategy-lab.html"><span class="pg-dot"></span>Strategy Lab</a>
+    <a href="study-room.html"><span class="pg-dot"></span>Study Room</a>
+  </div>
+</div>
+
+<div class="mkt-strip">
+  <span>S&amp;P 500 <b class="pos">+0.8%</b></span>
+  <span>NASDAQ <b class="pos">+1.1%</b></span>
+  <span>VIX <b class="pos">14.8</b></span>
+  <span>NVDA <b class="neg">−2.2%</b></span>
+  <span>10Y Yield <b>4.18%</b></span>
+</div>
+<div class="pick-stock-bar">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+  <input type="text" placeholder="Jump straight to a stock's profile — search any ticker">
+</div>
+
+<div class="wrap">
+  <div class="crumbs"><a href="market-weather.html">Market Weather</a><span>›</span><a href="sector-technology.html">Information Technology</a><span>›</span><a href="industry.html?ind=semiconductors">Semiconductors</a><span>›</span><span>NVDA</span></div>
+
+  <section class="card">
+    <div class="stock-head">
+      <div class="stock-id"><div class="tk">NVDA</div><div class="nm">NVIDIA Corporation</div></div>
+      <div class="price-block"><div class="px">$148.32</div><div class="chg neg">−3.34 (−2.2%) today</div></div>
+    </div>
+    <div class="verdict-row">
+      <button class="score-badge" type="button" data-g="score" aria-label="What is the composite score?"><span class="n" id="scoreN"></span><span class="d">/ 100</span></button>
+      <div class="verdict-text">
+        <div class="tag" id="scoreTag"></div>
+        <p>Strong six-month momentum, trading above all major moving averages, moderate volatility and robust earnings growth — but the valuation runs well above the sector median.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="section-head"><h2>What's driving the score</h2></div>
+    <p class="section-sub">Four sub-scores, each 0–100, where higher is more favourable. Tap any one to see what it means.</p>
+    <div class="subscore-grid" id="subscoreGrid"></div>
+  </section>
+
+  <div id="groupList"></div>
+
+  <p class="caveat" style="text-align:center;padding:4px 10px 0;">All figures are illustrative sample data. This page presents historical and calculated indicators for information only — it is analysis, not a recommendation to buy or sell.</p>
+</div>
+
+<div class="gl-scrim" id="glScrim"></div>
+<div class="gl-sheet" id="glSheet" role="dialog" aria-modal="true" aria-labelledby="glTitle">
+  <div class="gl-head"><div class="gl-grip"></div><h3 id="glTitle"></h3>
+    <button class="gl-close" id="glClose" type="button" aria-label="Close"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  </div>
+  <div class="gl-body" id="glBody"></div>
+</div>
+<script>
+(function(){
+  var root=document.documentElement;
+  try{ var s=localStorage.getItem('tb-mode'); if(s) root.setAttribute('data-mode',s);}catch(e){}
+  document.getElementById('themeBtn').addEventListener('click',function(){
+    var d=root.getAttribute('data-mode')==='dark'; root.setAttribute('data-mode',d?'light':'dark');
+    try{localStorage.setItem('tb-mode',d?'light':'dark');}catch(e){}
+  });
+  var nd=document.getElementById('navDrawer');
+  document.getElementById('menuBtn').addEventListener('click',function(){nd.classList.add('open');});
+  document.getElementById('navScrim').addEventListener('click',function(){nd.classList.remove('open');});
+
+  var SYM='NVDA';
+
+  // ---------- Sub-scores (higher = more favourable; for Risk and Valuation that means lower risk / cheaper) ----------
+  var subscores=[
+    {label:'Momentum',     value:85, band:'good', tag:'Strong uptrend',      g:'momentum'},
+    {label:'Risk',         value:54, band:'mid',  tag:'Moderate volatility', g:'risk'},
+    {label:'Valuation',    value:29, band:'bad',  tag:'Rich vs. sector',     g:'valuation'},
+    {label:'Fundamentals', value:88, band:'good', tag:'Robust growth',       g:'fundamentals'}
+  ];
+  // Proposed weights — the composite is calculated, never typed in
+  var W={Momentum:0.30, Risk:0.20, Valuation:0.20, Fundamentals:0.30};
+  var composite=subscores.reduce(function(a,s){return a+s.value*W[s.label];},0);
+  var scoreN=Math.round(composite);
+  document.getElementById('scoreN').textContent=scoreN;
+  document.getElementById('scoreTag').textContent= scoreN>=75?'Strong composite score': scoreN>=60?'Solid composite score': scoreN>=45?'Mixed composite score':'Weak composite score';
+
+  var bandColor={good:'var(--green)', mid:'var(--sky)', bad:'var(--red)'};
+  var valColor={good:'var(--green)', mid:'var(--text1)', bad:'var(--red)'};
+  document.getElementById('subscoreGrid').innerHTML=subscores.map(function(s){
+    return '<button class="subscore-card" type="button" data-g="'+s.g+'" data-here="'+s.value+' / 100">'+
+      '<div class="sl">'+s.label+'</div><div class="sv" style="color:'+valColor[s.band]+'">'+s.value+'</div>'+
+      '<div class="bar-track"><div class="bar-fill" style="width:'+s.value+'%;background:'+bandColor[s.band]+'"></div></div>'+
+      '<div class="st">'+s.tag+'</div></button>';
+  }).join('');
+
+  // ---------- Indicator groups (cls: pos / neg / flat — "watch" values are shown in plain text colour) ----------
+  var groups=[
+    {title:'Price and performance', sub:'How the stock has actually moved, over several windows.', items:[
+      {label:'6-month return', value:'+34.2%', cls:'pos', meaning:'Well ahead of a typical broad-market six-month move.', learn:'Total return', primary:true},
+      {label:'1-year return', value:'+58.7%', cls:'pos', meaning:'Sustained gains across the full year, not a short-term spike.', learn:'Total return', primary:true},
+      {label:'Distance from 52-week high', value:'−4.1%', cls:'flat', meaning:'Trading close to its recent peak — limited near-term room before new highs.', learn:'52-week high and low', primary:true},
+      {label:'1-month return', value:'+6.8%', cls:'pos', meaning:'Short-term momentum is positive but can reverse quickly.', learn:'Total return'},
+      {label:'3-month return', value:'+19.5%', cls:'pos', meaning:'Consistent with the six-month trend — no sign of stalling.', learn:'Total return'},
+      {label:'52-week high / low', value:'$152.89 / $86.62', cls:'flat', meaning:'The full range traded over the past year — a sense of this stock\'s typical swing.', learn:'52-week high and low'}]},
+    {title:'Momentum and trend', sub:'Whether the stock is currently trending, and how strongly.', items:[
+      {label:'RSI (14-day)', value:'64', cls:'flat', meaning:'Approaching overbought territory — buying pressure is strong but stretched.', learn:'RSI', g:'rsi', primary:true},
+      {label:'Price vs. moving averages', value:'Above all 3', cls:'pos', meaning:'Trading above its 20-, 50- and 200-day averages — a healthy, confirmed uptrend.', learn:'Moving averages', primary:true},
+      {label:'Momentum score', value:'85 / 100', cls:'pos', meaning:'Trend strength and consistency combined — currently one of the strongest readings on the Grid.', learn:'Momentum score', g:'momentum', primary:true},
+      {label:'20 / 50 / 200-day averages', value:'$139 / $126 / $108', cls:'flat', meaning:'Each average sits below the last — a textbook bullish stack.', learn:'Moving averages'},
+      {label:'MACD', value:'+2.4, rising', cls:'pos', meaning:'The trend-following signal line is positive and climbing, confirming the uptrend.', learn:'MACD'}]},
+    {title:'Risk and volatility', sub:'How bumpy the ride has been, historically.', items:[
+      {label:'Annualised volatility', value:'38.6%', cls:'flat', meaning:'Noticeably more volatile than the broad market\'s usual 15–20%.', learn:'Volatility', g:'volatility', primary:true},
+      {label:'Beta', value:'1.72', cls:'flat', meaning:'Tends to move about 70% more than the overall market, in either direction.', learn:'Beta', g:'beta', primary:true},
+      {label:'Max drawdown (1 year)', value:'−21.4%', cls:'flat', meaning:'The largest peak-to-trough decline seen over the past year.', learn:'Max drawdown', g:'drawdown', primary:true},
+      {label:'Downside volatility', value:'24.1%', cls:'flat', meaning:'Volatility measured only on down days — a cleaner read on the actual risk of loss.', learn:'Downside volatility'},
+      {label:'Sharpe ratio', value:'1.38', cls:'pos', meaning:'Solid risk-adjusted return — gains have compensated for the volatility taken on.', learn:'Sharpe ratio'}]},
+    {title:'Valuation', sub:'What the market is currently paying for this stock.', items:[
+      {label:'P/E (trailing / forward)', value:'54.1 / 38.9', cls:'flat', meaning:'Priced for continued strong growth — a lot is already assumed in today\'s price.', learn:'P/E ratio', g:'pe', primary:true},
+      {label:'vs. sector median P/E', value:'+61%', cls:'flat', meaning:'Trading well above what the typical semiconductor stock commands.', learn:'Sector-relative valuation', primary:true},
+      {label:'EV/EBITDA', value:'41.3', cls:'flat', meaning:'A rich multiple on cash earnings, consistent with the elevated P/E.', learn:'EV/EBITDA', primary:true},
+      {label:'Price-to-sales', value:'26.1', cls:'flat', meaning:'Very high relative to revenue — typical of a dominant-growth story stock.', learn:'Price-to-sales'},
+      {label:'Price-to-book', value:'48.7', cls:'flat', meaning:'Market value far exceeds book value — common for asset-light, high-margin businesses.', learn:'Price-to-book'}]},
+    {title:'Fundamentals', sub:'What the underlying business actually looks like.', items:[
+      {label:'Revenue growth (year on year)', value:'+94.3%', cls:'pos', meaning:'Exceptional top-line growth, far outpacing sector peers.', learn:'Revenue growth', primary:true},
+      {label:'EPS growth (year on year)', value:'+111.7%', cls:'pos', meaning:'Earnings growing even faster than revenue — margins are expanding.', learn:'EPS growth', primary:true},
+      {label:'Profit margin', value:'55.0%', cls:'pos', meaning:'Exceptionally high profitability for a hardware business.', learn:'Profit margin', primary:true},
+      {label:'Return on equity', value:'91.4%', cls:'pos', meaning:'Very efficient use of shareholder capital to generate profit.', learn:'Return on equity'},
+      {label:'Free cash flow (12 months)', value:'$27.1B', cls:'pos', meaning:'Ample cash generation to fund growth without relying on debt.', learn:'Free cash flow'},
+      {label:'Debt-to-equity', value:'0.17', cls:'pos', meaning:'Very low leverage — the balance sheet carries little financial risk.', learn:'Debt-to-equity'}]},
+    {title:'Trading and activity', sub:'How liquid and actively traded the stock currently is.', items:[
+      {label:'Average daily volume (30 days)', value:'218M shares', cls:'flat', meaning:'Among the most actively traded stocks in the market — very easy to enter or exit.', learn:'Volume', primary:true},
+      {label:'Today vs. average volume', value:'+32%', cls:'flat', meaning:'Trading noticeably more than usual — often a sign of fresh news or strong interest.', learn:'Volume', primary:true},
+      {label:'ATR (14-day)', value:'$4.87', cls:'flat', meaning:'Typical daily price swing in dollar terms — useful for setting stop levels.', learn:'Average true range'},
+      {label:'Liquidity', value:'Very high', cls:'pos', meaning:'Tight bid-ask spreads and deep order books — minimal cost to trade in size.', learn:'Liquidity'}]}
+  ];
+
+  var bookIcon='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>';
+  var chev='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>';
+  var ITEMS=[];
+  function esc(t){ return String(t).replace(/"/g,'&quot;'); }
+  function ind(it){
+    var i=ITEMS.push(it)-1;
+    return '<div class="ind-row"><div class="ind-main"><button class="term" type="button" data-i="'+i+'">'+it.label+'</button>'+
+      '<span class="ind-value '+it.cls+'">'+it.value+'</span></div>'+
+      '<div class="ind-meaning">'+it.meaning+'</div>'+
+      '<button class="learn-link" type="button" data-i="'+i+'">'+bookIcon+'Learn: '+it.learn+'</button></div>';
+  }
+  var list=document.getElementById('groupList');
+  groups.forEach(function(g,gi){
+    var prim=g.items.filter(function(x){return x.primary;}), rest=g.items.filter(function(x){return !x.primary;});
+    var card=document.createElement('section'); card.className='card group-card';
+    var h='<div class="section-head"><h2>'+g.title+'</h2><span class="step">'+(gi+1)+' / '+groups.length+'</span></div>'+
+      '<p class="section-sub">'+g.sub+'</p><div>'+prim.map(ind).join('')+'</div>';
+    if(rest.length){
+      h+='<div class="more-wrap"><div>'+rest.map(ind).join('')+'</div></div>'+
+        '<button class="see-all-btn" type="button"><span class="lbl">See all '+g.items.length+' indicators</span>'+chev+'</button>';
+    }
+    card.innerHTML=h; list.appendChild(card);
+    var btn=card.querySelector('.see-all-btn');
+    if(btn) btn.addEventListener('click',function(){
+      var open=card.classList.toggle('expanded'); card.querySelector('.more-wrap').classList.toggle('open',open);
+      btn.querySelector('.lbl').textContent=open?'Show less':'See all '+g.items.length+' indicators';
+    });
+  });
+
+  // ---------- Glossary: plain words first, then how it's calculated ----------
+  var GL={
+    score:{t:'Composite score',
+      plain:['One number from 0 to 100 that sums up how the stock looks across four areas: momentum, risk, valuation and fundamentals. The higher it is, the more of those areas look favourable.',
+             'It\'s a quick way to compare stocks side by side — a summary, not a signal to buy or sell.'],
+      steps:['Each of the four sub-scores is scored from 0 to 100, where higher is always more favourable. For risk that means calmer; for valuation it means cheaper.',
+             'The four are blended with weights: momentum and fundamentals count most, risk and valuation a little less.',
+             'The result is rounded to a whole number.'],
+      f:'Composite = 0.30 × Momentum\n          + 0.20 × Risk\n          + 0.20 × Valuation\n          + 0.30 × Fundamentals\n\nNVDA: 25.5 + 10.8 + 5.8 + 26.4\n    = 68.5 → 69',
+      note:'Weights are a working proposal and may be tuned.'},
+    momentum:{t:'Momentum score',
+      plain:['How strongly — and how steadily — the price has been rising compared with the rest of the S&P 500.',
+             'A score of 85 means the stock has done better than roughly 85% of the index on these measures.'],
+      steps:['Take the return over the past 12 months, leaving out the most recent month (short-term swings tend to reverse), and the return over the past 6 months.',
+             'Rank each return against every S&P 500 stock as a percentile, from 0 to 100.',
+             'Add a trend check: 100 if the price is above both its 50- and 200-day averages, 50 if above one, 0 if above neither.',
+             'Blend the three.'],
+      f:'Momentum = 0.4 × 12-month percentile\n         + 0.4 × 6-month percentile\n         + 0.2 × trend check',
+      note:'Weights are a working proposal and may be tuned.'},
+    rsi:{t:'RSI — Relative Strength Index',
+      plain:['Compares the size of recent gains with recent losses, on a scale from 0 to 100.',
+             'Above 70 is often read as "overbought" — the price has risen fast and may be stretched. Below 30 is "oversold". A reading of 64 means buying has been strong, but not extreme.'],
+      steps:['Look at the last 14 trading days.',
+             'Average gain: the average of the up-day moves (down days count as zero).',
+             'Average loss: the average of the down-day moves, as positive numbers.',
+             'Divide one by the other to get RS, then convert it to the 0–100 scale.',
+             'Each day after the first, the averages are smoothed: (previous average × 13 + today\'s move) ÷ 14.'],
+      f:'RS  = average gain ÷ average loss\nRSI = 100 − 100 ÷ (1 + RS)'},
+    volatility:{t:'Volatility',
+      plain:['How much the price swings around from day to day, expressed as a yearly figure.',
+             'At 38.6%, in about two years out of three you would expect the yearly move to land within roughly ±39% of its average. The broad market usually sits around 15–20%, so this stock swings about twice as much.'],
+      steps:['Work out each day\'s return: today\'s close ÷ yesterday\'s close − 1.',
+             'Take the standard deviation of those daily returns over the past year (about 252 trading days).',
+             'Scale it up to a year by multiplying by the square root of 252, which is about 15.9.'],
+      f:'Daily return  rₜ = Pₜ ÷ Pₜ₋₁ − 1\nVolatility    = stdev(rₜ) × √252\n\nNVDA: 2.43% × 15.87 ≈ 38.6%'},
+    beta:{t:'Beta',
+      plain:['How much the stock tends to move when the whole market moves.',
+             'A beta of 1 moves in step with the S&P 500. At 1.72, when the market has risen or fallen 1%, this stock has moved about 1.7% on average — bigger swings in both directions.'],
+      steps:['Collect daily (or weekly) returns for the stock and for the S&P 500 over the same period, usually one to two years.',
+             'Measure how the two move together (covariance) and how much the market moves on its own (variance).',
+             'Divide one by the other. This is the same as the slope of a line drawn through a scatter of stock returns against market returns.'],
+      f:'Beta = Cov(stock, market)\n       ÷ Var(market)'},
+    drawdown:{t:'Max drawdown',
+      plain:['The biggest fall from a high point to a later low within the period.',
+             'At −21.4% over the past year: someone who bought at the peak was down 21.4% at the worst moment, before any recovery.'],
+      steps:['Go through the daily closing prices in order.',
+             'Keep track of the highest close seen so far — the running peak.',
+             'Each day, measure how far the close is below that peak.',
+             'The max drawdown is the deepest of those daily readings.'],
+      f:'Drawdownₜ = Pₜ ÷ max(P₀ … Pₜ) − 1\nMax drawdown = min(Drawdownₜ)',
+      link:['study-room.html','There\'s a full lesson on this in the Study Room']},
+    pe:{t:'P/E ratio — price to earnings',
+      plain:['How many dollars investors are paying for each dollar of yearly profit.',
+             'A trailing P/E of 54.1 means paying about $54 for every $1 the company earned over the past year. The forward P/E (38.9) uses next year\'s expected profit — lower because profits are expected to grow. A high P/E means a lot of future growth is already built into the price.'],
+      steps:['Earnings per share (EPS) = the company\'s net profit ÷ the number of shares.',
+             'Trailing P/E uses the actual EPS from the last 12 months.',
+             'Forward P/E uses analysts\' average estimate of EPS for the next 12 months.'],
+      f:'P/E = share price ÷ EPS\n\nNVDA trailing: $148.32 ÷ $2.74 ≈ 54.1\nNVDA forward:  $148.32 ÷ $3.81 ≈ 38.9'}
+  };
+  var SUBTITLE={risk:'Risk score', valuation:'Valuation score', fundamentals:'Fundamentals score'};
+
+  var scrim=document.getElementById('glScrim'), sheet=document.getElementById('glSheet'), bodyEl=document.getElementById('glBody'), lastFocus=null;
+  function openGl(key, title, here, meaning){
+    var e=GL[key], h='';
+    document.getElementById('glTitle').textContent=e?e.t:title;
+    if(e){
+      h+='<div class="gl-label">In plain words</div>'+e.plain.map(function(p){return '<p class="gl-plain">'+p+'</p>';}).join('');
+      if(here) h+='<div class="gl-here"><span>'+SYM+' right now</span><b>'+here+'</b></div>';
+      h+='<div class="gl-label">How it\'s calculated</div><div class="gl-calc"><ol>'+e.steps.map(function(s){return '<li>'+s+'</li>';}).join('')+'</ol>'+
+         (e.f?'<div class="gl-f">'+e.f+'</div>':'')+'</div>';
+      if(e.link) h+='<p class="gl-note"><a href="'+e.link[0]+'" style="color:var(--blue);text-decoration:none;">'+e.link[1]+' →</a></p>';
+      if(e.note) h+='<p class="gl-note">'+e.note+'</p>';
+    } else {
+      if(meaning) h+='<div class="gl-label">On this page</div><p class="gl-plain">'+meaning+'</p>';
+      if(here) h+='<div class="gl-here"><span>'+SYM+' right now</span><b>'+here+'</b></div>';
+      h+='<div class="gl-label">How it\'s calculated</div><div class="gl-soon">The full explanation and calculation for this term are being written.</div>';
+    }
+    bodyEl.innerHTML=h; bodyEl.scrollTop=0;
+    lastFocus=document.activeElement;
+    scrim.classList.add('open'); sheet.classList.add('open'); document.body.classList.add('gl-lock');
+    setTimeout(function(){ document.getElementById('glClose').focus({preventScroll:true}); },50);
+  }
+  function closeGl(){
+    scrim.classList.remove('open'); sheet.classList.remove('open'); document.body.classList.remove('gl-lock');
+    if(lastFocus) lastFocus.focus({preventScroll:true});
+  }
+  scrim.addEventListener('click',closeGl);
+  document.getElementById('glClose').addEventListener('click',closeGl);
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && sheet.classList.contains('open')) closeGl(); });
+
+  document.addEventListener('click',function(e){
+    var t=e.target.closest('[data-i]');
+    if(t){ var it=ITEMS[+t.getAttribute('data-i')]; openGl(it.g, it.label, it.value, it.meaning); return; }
+    var g=e.target.closest('[data-g]');
+    if(g){ var k=g.getAttribute('data-g');
+      var here=k==='score'? scoreN+' / 100' : g.getAttribute('data-here');
+      var sc=subscores.filter(function(s){return s.g===k;})[0];
+      openGl(k, SUBTITLE[k]||k, here, sc? sc.tag+'.' : '');
+    }
+  });
+})();
+</script>
+</body>
+</html>

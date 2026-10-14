@@ -1,0 +1,843 @@
+<!doctype html>
+<html lang="en" data-mode="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lesson — Study Room · Trendably</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Inter+Tight:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+    /* Light mode (default) */
+    --bg: #FFFFFF;
+    --panel: #F4F9FE;
+    --panel2: #EAF3FC;
+    --border: #C9DCF2;
+    --border-soft: #DCE9F8;
+    --text1: #0B1C33;
+    --text2: #33547A;
+    --text3: #5A7699;
+    --text4: #8CA0BC;
+    --blue: #1C6FE0;
+    --cyan: #0EA5C4;
+    --green: #0E9F6E;
+    --red: #D23A58;
+    --head-grad: linear-gradient(180deg, rgba(28,111,224,0.92) 0%, rgba(14,165,196,0.5) 65%, rgba(255,255,255,0) 100%);
+    --head-text: #FFFFFF;
+    --nav-grad: linear-gradient(180deg, rgba(28,111,224,0.45) 0%, rgba(14,165,196,0.16) 65%, rgba(255,255,255,0.02) 100%);
+    --accent-soft: rgba(28,111,224,0.07);
+    --shadow: 0 12px 28px rgba(11,28,51,0.12);
+    --strip-bg: #F4F9FE;
+    --sky: #6FA8E8;
+    color-scheme: light;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  :root[data-mode="dark"] {
+    --bg: #05080E;
+    --panel: #0D1420;
+    --panel2: #121A27;
+    --border: #2A3850;
+    --border-soft: #1C2636;
+    --text1: #F3F6FB;
+    --text2: #B7C0D1;
+    --text3: #8593A8;
+    --text4: #5B6472;
+    --blue: #2F8CFF;
+    --cyan: #21D4F0;
+    --green: #2EE6A6;
+    --red: #FF5577;
+    --head-grad: linear-gradient(180deg, rgba(47,140,255,0.30) 0%, rgba(33,212,240,0.10) 70%, rgba(13,20,32,0) 100%);
+    --head-text: #EAF2FF;
+    --nav-grad: linear-gradient(180deg, rgba(47,140,255,0.16) 0%, rgba(33,212,240,0.05) 65%, rgba(5,8,14,0) 100%);
+    --accent-soft: rgba(47,140,255,0.12);
+    --shadow: 0 16px 34px rgba(0,0,0,0.5);
+    --strip-bg: #0A111C;
+    --sky: #8FC0FF;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0; background: var(--bg); color: var(--text1);
+    font-family: 'Inter Tight', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  /* ---------- Nav ---------- */
+  nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 18px; border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; top: env(safe-area-inset-top, 0px);
+    background: var(--nav-grad);
+    backdrop-filter: blur(10px); z-index: 20;
+  }
+  .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; }
+  .brand .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 10px rgba(14,165,196,0.5); }
+  .back { font-size: 13px; color: var(--text3); text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .brand .logo { width: 28px; height: 28px; flex: none; }
+  .word { font-family: 'Sora', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: -0.02em; color: var(--text1); }
+  .word span { background: linear-gradient(90deg, var(--blue), var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .page-tag { font-size: 12.5px; color: var(--text3); padding-left: 10px; margin-left: 2px; border-left: 1px solid var(--border); }
+  .nav-actions { display: flex; align-items: center; gap: 8px; }
+  .t-sun { display: none; }
+  :root[data-mode="dark"] .t-sun { display: block; }
+  :root[data-mode="dark"] .t-moon { display: none; }
+
+
+  .menu-btn {
+    width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--border-soft); background: none;
+    display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text2); flex: none;
+  }
+  .menu-btn svg { width: 16px; height: 16px; }
+
+  .nav-drawer {
+    position: fixed; inset: 0; z-index: 50; visibility: hidden;
+  }
+  .nav-drawer.open { visibility: visible; }
+  .nav-drawer .scrim {
+    position: absolute; inset: 0; background: rgba(5,8,14,0.45);
+    opacity: 0; transition: opacity 0.2s ease;
+  }
+  .nav-drawer.open .scrim { opacity: 1; }
+  .nav-drawer .panel {
+    position: absolute; top: 0; right: 0; bottom: 0; width: 78%; max-width: 300px;
+    background: var(--panel); border-left: 1px solid var(--border-soft);
+    padding: 20px 18px; transform: translateX(100%); transition: transform 0.25s ease;
+    box-shadow: var(--shadow);
+  }
+  .nav-drawer.open .panel { transform: translateX(0); }
+  .nav-drawer .panel h3 { font-family: 'Sora', sans-serif; font-size: 13px; color: var(--text3); font-weight: 600; margin: 0 0 14px; }
+  .nav-drawer .panel a {
+    display: flex; align-items: center; gap: 10px; padding: 11px 10px; border-radius: 9px;
+    color: var(--text1); text-decoration: none; font-size: 14px; font-weight: 500; margin-bottom: 2px;
+  }
+  .nav-drawer .panel a.current { background: var(--accent-soft); color: var(--blue); font-weight: 600; }
+  .nav-drawer .panel a .pg-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--border); flex: none; }
+  .nav-drawer .panel a.current .pg-dot { background: var(--blue); }
+
+  /* ---------- Explainer pop-up ---------- */
+  .gl-scrim { position: fixed; inset: 0; background: rgba(5,8,14,0.45); opacity: 0; pointer-events: none; transition: opacity .25s ease; z-index: 60; }
+  .gl-scrim.open { opacity: 1; pointer-events: auto; }
+  .gl-sheet { position: fixed; left: 50%; bottom: 0; width: min(560px, 100%); max-height: 84vh; max-height: 84dvh;
+    transform: translate(-50%, 104%); transition: transform .3s cubic-bezier(.2,.8,.2,1), visibility 0s linear .3s;
+    background: var(--bg); border: 1px solid var(--border); border-bottom: none; border-radius: 20px 20px 0 0;
+    box-shadow: var(--shadow); z-index: 61; display: flex; visibility: hidden; flex-direction: column; overflow: hidden; }
+  .gl-sheet.open { transform: translate(-50%, 0); visibility: visible; transition: transform .3s cubic-bezier(.2,.8,.2,1), visibility 0s; }
+  .gl-head { flex: none; background: var(--head-grad); padding: 10px 18px 16px; position: relative; }
+  .gl-grip { width: 38px; height: 4px; border-radius: 4px; background: var(--head-text); opacity: .55; margin: 0 auto 12px; }
+  .gl-head h3 { font-size: 19px; font-weight: 600; color: var(--head-text); padding-right: 40px; }
+  .gl-close { position: absolute; top: 18px; right: 14px; width: 32px; height: 32px; border-radius: 50%; border: none;
+    background: rgba(255,255,255,0.18); color: var(--head-text); display: flex; align-items: center; justify-content: center; }
+  .gl-body { overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; padding: 6px 18px 22px; padding-bottom: calc(22px + env(safe-area-inset-bottom, 0px)); }
+    * { box-sizing: border-box; }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body { margin:0; background:var(--bg); color:var(--text1); font-family:'Inter Tight',system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+  h1,h2,h3,h4 { font-family:'Sora',sans-serif; margin:0; letter-spacing:-0.02em; }
+  button { font-family:inherit; cursor:pointer; }
+  a { color:inherit; }
+  :focus-visible { outline:2px solid var(--cyan); outline-offset:2px; }
+
+  /* sticky top: app nav + lesson position */
+  .top { position:sticky; top:0; z-index:30; background:var(--bg); }
+  .top nav { position:static; }
+  .where { border-bottom:1px solid var(--border); background:var(--strip-bg); }
+  .where-in { max-width:780px; margin:0 auto; padding:9px 18px 10px; }
+  .crumbs { display:flex; flex-wrap:wrap; align-items:center; gap:2px 6px; font-size:12.5px; color:var(--text3); }
+  .crumbs a { color:var(--blue); text-decoration:none; }
+  .crumbs .sep { color:var(--text4); }
+  .crumbs .here { color:var(--text2); }
+  .pos-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:5px; }
+  .pos-now { font-size:13.5px; color:var(--text1); font-weight:600; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pos-now span { color:var(--text3); font-weight:500; }
+  .dots { display:flex; gap:5px; flex:none; }
+  .dots button { width:22px; height:6px; border-radius:4px; border:none; padding:0; background:var(--border); }
+  .dots button.done { background:var(--cyan); }
+  .dots button.now { background:var(--blue); }
+  .dots button.now.done { background:linear-gradient(90deg,var(--blue),var(--cyan)); }
+
+  .wrap { max-width:780px; margin:0 auto; padding:0 18px 110px; }
+
+  .lesson-head { padding:26px 2px 18px; }
+  .lesson-head .kicker { font-size:12.5px; color:var(--text3); }
+  .lesson-head h1 { font-size:22px; font-weight:600; margin-top:6px; }
+  .lesson-head p { font-size:15px; color:var(--text2); line-height:1.6; margin:8px 0 0; max-width:58ch; }
+
+  .card { background:var(--panel); border:1px solid var(--border); border-radius:16px; box-shadow:var(--shadow); padding:20px; margin-bottom:18px; scroll-margin-top:140px; }
+  .section-head { display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:-20px -20px 16px; padding:15px 20px; border-radius:15px 15px 0 0; background:var(--head-grad); }
+  .section-head h2 { font-size:17px; font-weight:600; color:var(--head-text); }
+  .section-head .n { font-size:12.5px; color:var(--head-text); opacity:.8; white-space:nowrap; }
+
+  .read p { font-size:15px; line-height:1.65; color:var(--text1); margin:0 0 12px; max-width:62ch; }
+  .read p.aside { color:var(--text2); }
+
+  /* app snapshot */
+  .snap { margin:16px 0 6px; border:1px solid var(--border); border-radius:12px; background:var(--bg); overflow:hidden; }
+  .snap-bar { display:flex; align-items:center; gap:7px; padding:7px 12px; font-size:11.5px; color:var(--text3); background:var(--panel2); border-bottom:1px solid var(--border-soft); }
+  .snap-bar svg { flex:none; }
+  .snap-body { padding:12px 14px; overflow-x:auto; }
+  .snap-cap { font-size:12.5px; color:var(--text3); line-height:1.5; margin:6px 2px 0; }
+  .pos { color:var(--green); } .neg { color:var(--red); }
+
+  .s-strip { display:flex; gap:18px; font-size:12.5px; color:var(--text3); white-space:nowrap; }
+  .s-strip b { font-weight:600; }
+  .s-strip .hl { padding:3px 8px; margin:-3px -8px; border-radius:7px; background:var(--accent-soft); outline:1px solid var(--blue); color:var(--text1); }
+
+  .s-grid-h { display:flex; align-items:baseline; justify-content:space-between; gap:10px; }
+  .s-grid-h b { font-family:'Sora',sans-serif; font-size:15px; }
+  .s-grid-h span { font-size:12px; color:var(--text3); }
+  .s-chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+  .s-chips span { font-size:11.5px; padding:4px 9px; border-radius:20px; border:1px solid var(--border); color:var(--text2); background:var(--panel); }
+
+  .s-bars { display:grid; gap:6px; min-width:260px; }
+  .s-bar { display:grid; grid-template-columns:118px 1fr 34px; align-items:center; gap:10px; font-size:12px; color:var(--text2); }
+  .s-bar i { display:block; height:8px; border-radius:4px; background:linear-gradient(90deg,var(--blue),var(--cyan)); }
+  .s-bar em { font-style:normal; text-align:right; color:var(--text1); font-weight:600; }
+  .s-bar.big { color:var(--text1); font-weight:600; }
+
+  .s-quote { display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 14px; }
+  .s-quote .nm { font-size:12.5px; color:var(--text3); width:100%; }
+  .s-quote .lvl { font-family:'Sora',sans-serif; font-size:24px; font-weight:600; }
+  .s-quote .chg { font-size:14px; font-weight:600; }
+  .s-quote .chg u { text-decoration:none; padding:2px 6px; border-radius:6px; background:var(--accent-soft); }
+  .s-legend { display:flex; gap:16px; margin-top:8px; font-size:11.5px; color:var(--text3); }
+
+  .s-moves { display:grid; gap:2px; min-width:240px; }
+  .s-move { display:flex; justify-content:space-between; font-size:12.5px; padding:6px 2px; border-bottom:1px solid var(--border-soft); color:var(--text2); }
+  .s-move:last-child { border-bottom:none; }
+  .s-move b { font-weight:600; }
+  .s-move.idx { color:var(--text1); font-weight:600; background:var(--accent-soft); border-radius:7px; padding:6px 8px; margin-top:4px; border-bottom:none; }
+
+  /* common mistake */
+  .mistake { margin:16px 0 0; padding:12px 14px; border-radius:10px; background:var(--panel2); border-left:3px solid var(--red); }
+  .mistake h4 { font-size:13px; font-weight:600; color:var(--text1); margin-bottom:4px; }
+  .mistake p { font-size:14px; line-height:1.6; color:var(--text2); margin:0; }
+
+  /* check */
+  .check { margin-top:18px; padding-top:16px; border-top:1px solid var(--border-soft); }
+  .check h4 { font-size:13px; font-weight:600; color:var(--text3); margin-bottom:6px; }
+  .check .q { font-size:15.5px; line-height:1.55; font-weight:500; margin:0 0 12px; max-width:60ch; }
+  .opts { display:grid; gap:8px; }
+  .opt { text-align:left; display:flex; gap:11px; align-items:flex-start; width:100%; padding:12px 14px; border-radius:11px; border:1px solid var(--border); background:var(--bg); color:var(--text1); font-size:14.5px; line-height:1.5; }
+  .opt:hover:not(:disabled) { border-color:var(--blue); }
+  .opt .mk { flex:none; width:20px; height:20px; border-radius:50%; border:1.5px solid var(--border); margin-top:1px; display:flex; align-items:center; justify-content:center; }
+  .opt.wrong { border-color:var(--red); background:color-mix(in srgb,var(--red) 7%,var(--bg)); }
+  .opt.wrong .mk { border-color:var(--red); background:var(--red); }
+  .opt.right { border-color:var(--green); background:color-mix(in srgb,var(--green) 9%,var(--bg)); }
+  .opt.right .mk { border-color:var(--green); background:var(--green); }
+  .opt .mk svg { display:none; width:12px; height:12px; color:#fff; }
+  .opt.right .mk .ok, .opt.wrong .mk .no { display:block; }
+  .opt:disabled { cursor:default; }
+  .opts.solved .opt:not(.right) { opacity:.55; }
+  .fb { font-size:14px; line-height:1.6; margin:10px 0 0; padding:10px 12px; border-radius:9px; }
+  .fb.no { background:color-mix(in srgb,var(--red) 8%,transparent); color:var(--text1); }
+  .fb.yes { background:color-mix(in srgb,var(--green) 10%,transparent); color:var(--text1); }
+  .fb b { font-weight:600; }
+
+  .after { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:12px; margin-top:16px; }
+  .explore { display:flex; flex-wrap:wrap; gap:8px; }
+  .explore span { font-size:12.5px; color:var(--text3); width:100%; }
+  .ask { font-size:13px; padding:7px 12px; border-radius:20px; border:1px solid var(--border); background:var(--accent-soft); color:var(--blue); }
+  .ask:hover { border-color:var(--blue); }
+  .next { display:none; border:none; border-radius:11px; padding:11px 18px; font-size:14px; font-weight:600; color:#fff; background:linear-gradient(135deg,var(--blue),var(--cyan)); }
+  .card.solved .next { display:inline-flex; }
+
+  /* recap */
+  .recap ol { margin:0; padding-left:20px; }
+  .recap li { font-size:14.5px; line-height:1.6; color:var(--text1); margin-bottom:8px; }
+  .recap li::marker { color:var(--blue); font-weight:600; }
+  .recap .status { font-size:13px; color:var(--text3); margin:4px 0 14px; }
+  .recap .row { display:flex; flex-wrap:wrap; gap:10px; margin-top:14px; }
+  .btn2 { display:inline-flex; align-items:center; border-radius:11px; padding:11px 16px; font-size:14px; font-weight:600; text-decoration:none; border:1px solid var(--border); color:var(--text1); background:var(--bg); }
+  .btn2.pri { border:none; color:#fff; background:linear-gradient(135deg,var(--blue),var(--cyan)); }
+
+  /* tutor launcher */
+  .tutor-btn { position:fixed; right:16px; bottom:calc(18px + env(safe-area-inset-bottom,0px)); z-index:40; display:flex; align-items:center; gap:8px; padding:12px 16px; border-radius:30px; border:none; color:#fff; font-size:14px; font-weight:600; background:linear-gradient(135deg,var(--blue),var(--cyan)); box-shadow:0 10px 26px rgba(28,111,224,.35); }
+  .tutor-btn svg { width:18px; height:18px; }
+
+  /* tutor sheet (same pattern as the glossary pop-up) */
+  .gl-sheet { height:78vh; height:78dvh; }
+  .gl-head .ctx { font-size:12.5px; color:var(--head-text); opacity:.85; margin-top:4px; padding-right:40px; }
+  .chat { flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; overscroll-behavior:contain; padding:14px 16px; display:flex; flex-direction:column; gap:10px; }
+  .msg { max-width:86%; font-size:14.5px; line-height:1.55; padding:10px 13px; border-radius:14px; white-space:pre-wrap; }
+  .msg.me { align-self:flex-end; background:var(--blue); color:#fff; border-bottom-right-radius:4px; }
+  .msg.tu { align-self:flex-start; background:var(--panel); border:1px solid var(--border-soft); color:var(--text1); border-bottom-left-radius:4px; }
+  .msg.tu.wait { color:var(--text3); }
+  .chat-note { font-size:12px; color:var(--text4); text-align:center; line-height:1.5; padding:0 8px; }
+  .starters { display:flex; flex-wrap:wrap; gap:8px; }
+  .composer { flex:none; display:flex; gap:8px; padding:10px 12px; padding-bottom:calc(10px + env(safe-area-inset-bottom,0px)); border-top:1px solid var(--border); background:var(--panel); }
+  .composer textarea { flex:1; resize:none; height:44px; max-height:110px; border-radius:12px; border:1px solid var(--border); background:var(--bg); color:var(--text1); font:inherit; font-size:15px; padding:11px 12px; outline:none; }
+  .composer textarea:focus { border-color:var(--blue); }
+  .composer button { flex:none; width:44px; height:44px; border-radius:12px; border:none; color:#fff; background:linear-gradient(135deg,var(--blue),var(--cyan)); display:flex; align-items:center; justify-content:center; }
+  .composer button:disabled { opacity:.5; }
+
+  @media (max-width:520px){
+    .page-tag { display:none; }
+    .s-bar { grid-template-columns:104px 1fr 32px; }
+    .dots button { width:16px; }
+  }
+  @media (prefers-reduced-motion:reduce){ * { transition:none!important; scroll-behavior:auto!important; } }
+
+.s-empty{padding:18px;text-align:center;color:var(--text3);font-size:13px;border:1px dashed var(--border);border-radius:10px}
+</style>
+</head>
+<body>
+<div class="top" id="top">
+<nav>
+  <a class="brand" href="index.html" aria-label="Trendably home">
+    <svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="mk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0E1A3D"/><stop offset=".6" stop-color="#1D5FD0"/><stop offset="1" stop-color="#2F8CFF"/></linearGradient></defs><rect width="40" height="40" rx="11" fill="url(#mk)"/><rect x="8" y="26" width="3.4" height="8" rx="1" fill="#8FC0FF"/><rect x="14" y="21" width="3.4" height="13" rx="1" fill="#8FC0FF"/><rect x="20" y="24" width="3.4" height="10" rx="1" fill="#8FC0FF"/><rect x="26" y="15" width="3.4" height="19" rx="1" fill="#8FC0FF"/><path d="M6 27L15 19L21 24L34 9" stroke="#21D4F0" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span class="word">trend<span>ably</span></span>
+    <span class="page-tag">Study Room</span>
+  </a>
+  <div class="nav-actions">
+    <button class="menu-btn" id="themeBtn" type="button" aria-label="Switch light or dark">
+      <svg class="t-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg>
+      <svg class="t-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg>
+    </button>
+    <button class="menu-btn" id="menuBtn" type="button" aria-label="Open navigation">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="nav-drawer" id="navDrawer">
+  <div class="scrim" id="navScrim"></div>
+  <div class="panel">
+    <h3>Trendably</h3>
+    <a href="index.html"><span class="pg-dot"></span>Home</a>
+    <a href="market-weather.html"><span class="pg-dot"></span>Market Weather</a>
+    <a href="the-grid.html"><span class="pg-dot"></span>The Grid</a>
+    <a href="stock-detail.html"><span class="pg-dot"></span>Stock Detail</a>
+    <a href="strategy-lab.html"><span class="pg-dot"></span>Strategy Lab</a>
+    <a href="study-room.html" class="current"><span class="pg-dot"></span>Study Room</a>
+  </div>
+</div>
+
+
+  <div class="where"><div class="where-in">
+    <div class="crumbs" id="crumbs"></div>
+    <div class="pos-row"><div class="pos-now" id="posNow"></div><div class="dots" id="dots"></div></div>
+  </div></div>
+</div>
+
+<main class="wrap">
+  <header class="lesson-head">
+    <div class="kicker" id="kicker"></div>
+    <h1 id="lTitle"></h1>
+    <p id="lIntro"></p>
+  </header>
+  <div id="concepts"></div>
+</main>
+
+<button class="tutor-btn" id="tutorBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 01-11.8 7L4 20l1.1-4.6A8 8 0 1121 12z"/></svg>Ask the tutor</button>
+
+<div class="gl-scrim" id="tScrim"></div>
+<div class="gl-sheet" id="tSheet" role="dialog" aria-modal="true" aria-labelledby="tTitle" aria-hidden="true">
+  <div class="gl-head"><div class="gl-grip"></div><h3 id="tTitle">Tutor</h3><div class="ctx" id="tCtx"></div>
+    <button class="gl-close" id="tClose" aria-label="Close tutor"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+  <div class="chat" id="chat">
+    <div class="msg tu">Ask me anything about this lesson — or anything that isn’t clicking. I explain how markets work; I won’t tell you what to buy or sell.</div>
+    <div class="starters" id="starters"><button class="ask" data-q="Can you explain this concept a different way?">Explain this a different way</button><button class="ask" data-q="Can you give me a real-world example of this?">Give me an example</button></div>
+    <p class="chat-note" id="tNote"></p>
+  </div>
+  <div class="composer"><textarea id="tInput" rows="1" placeholder="Ask the tutor" aria-label="Ask the tutor"></textarea>
+    <button id="tSend" aria-label="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+</div>
+
+<!-- SAMPLE market figures. Replace with the live feed (same shape). -->
+<script type="application/json" id="market-data">
+{
+  "asOf": "sample",
+  "index": {
+    "name": "S&P 500",
+    "level": 6612.4,
+    "points": -39.9,
+    "move": -0.6
+  },
+  "strip": [
+    [
+      "S&P 500",
+      -0.6,
+      "%"
+    ],
+    [
+      "NASDAQ",
+      -0.9,
+      "%"
+    ],
+    [
+      "Dow Jones",
+      -0.2,
+      "%"
+    ],
+    [
+      "VIX",
+      16.1,
+      ""
+    ]
+  ],
+  "sectors": [
+    {
+      "name": "Information Technology",
+      "weight": 38,
+      "move": -1.4
+    },
+    {
+      "name": "Financials",
+      "weight": 13,
+      "move": -0.1
+    },
+    {
+      "name": "Consumer Discretionary",
+      "weight": 10,
+      "move": -0.7
+    },
+    {
+      "name": "Communication Services",
+      "weight": 10,
+      "move": -0.4
+    },
+    {
+      "name": "Health Care",
+      "weight": 9,
+      "move": -0.6
+    },
+    {
+      "name": "Industrials",
+      "weight": 8,
+      "move": 0.2
+    },
+    {
+      "name": "Consumer Staples",
+      "weight": 5,
+      "move": 0.3
+    },
+    {
+      "name": "Energy",
+      "weight": 3,
+      "move": 1.8
+    },
+    {
+      "name": "Utilities",
+      "weight": 2,
+      "move": 0.9
+    },
+    {
+      "name": "Materials",
+      "weight": 2,
+      "move": 0.1
+    },
+    {
+      "name": "Real Estate",
+      "weight": 2,
+      "move": -0.3
+    }
+  ]
+}
+</script>
+<!-- Inline fallback lesson, so the page works on its own. In the app, lessons load from lessons/<id>.json -->
+<script type="application/json" id="lesson-data">
+{
+  "id": "foundations/market-as-a-whole/what-an-index-is",
+  "tier": {
+    "id": "foundations",
+    "title": "Foundations"
+  },
+  "chapter": {
+    "id": "market-as-a-whole",
+    "title": "The market as a whole"
+  },
+  "number": 1,
+  "lessonsInChapter": 4,
+  "minutes": 12,
+  "title": "What an index is",
+  "intro": "Five short ideas that let you read the S&P 500 figure on every Trendably page without guessing. Read top to bottom; each ends with one question.",
+  "concepts": [
+    {
+      "title": "What an index measures",
+      "read": [
+        "An index is one number that sums up how a whole group of stocks is doing. Instead of checking 500 prices, you check one.",
+        "When the news says “the market fell today”, it almost always means an index fell."
+      ],
+      "aside": "Think of a class average: it tells you how the class did, not how any one student did.",
+      "snapshot": {
+        "type": "strip",
+        "where": "Market Weather · top strip",
+        "caption": "Each name in this strip is an index. The S&P 500 is the one Trendably is built around."
+      },
+      "mistake": "An index isn’t something you can own. It’s a measurement, like a temperature reading. To invest in what it tracks, people buy a fund built to copy it — that’s Lesson 3.",
+      "question": {
+        "prompt": "A friend says, “The S&P 500 dropped 1% today.” What actually happened?",
+        "options": [
+          {
+            "text": "Every one of the 500 companies lost about 1%.",
+            "feedback": "An index is a summary. On a day it falls 1%, plenty of its companies can still rise."
+          },
+          {
+            "text": "The combined value of a large group of US companies fell by about 1%.",
+            "feedback": "Right. The index sums up the whole group in one number, so a 1% drop describes the group, not each company.",
+            "correct": true
+          },
+          {
+            "text": "A company called S&P lost 1% of its value.",
+            "feedback": "S&P is the firm that maintains the index. The index measures other companies, not S&P itself."
+          },
+          {
+            "text": "Shares of the S&P 500 in your account are now worth 1% less.",
+            "feedback": "You can’t hold the index itself. You can hold a fund that copies it, which comes later in this chapter."
+          }
+        ]
+      },
+      "explore": [
+        "Why not just average the 500 share prices?",
+        "Who decides what an index measures?"
+      ]
+    },
+    {
+      "title": "What the S&P 500 represents",
+      "read": [
+        "The S&P 500 follows about 500 of the largest companies listed in the United States. Together they make up roughly 80% of the value of the whole US stock market, which is why it’s the usual stand-in for “the market”.",
+        "A committee chooses the members using rules about size, profits and how easily the shares trade, and swaps companies in and out over time."
+      ],
+      "snapshot": {
+        "type": "grid",
+        "where": "The Grid · header",
+        "caption": "Every sector and stock you open in the Grid is a slice of the S&P 500."
+      },
+      "mistake": "It isn’t simply “the 500 biggest companies”, and it isn’t the whole economy. Private companies, smaller companies and most foreign ones aren’t in it.",
+      "question": {
+        "prompt": "A well-known private company, not listed on any stock exchange, doubles in value. What happens to the S&P 500?",
+        "options": [
+          {
+            "text": "It rises, since the index follows the US economy.",
+            "feedback": "The index follows large listed companies, not the economy as a whole. A private company isn’t part of it."
+          },
+          {
+            "text": "It rises, because fast-growing companies are added automatically.",
+            "feedback": "Changes are made by a committee under set rules, and a company has to be publicly listed to qualify."
+          },
+          {
+            "text": "Nothing directly — only companies whose shares trade publicly are in the index.",
+            "feedback": "Right. A company has to be listed, and chosen, before its value can move the index.",
+            "correct": true
+          }
+        ]
+      },
+      "explore": [
+        "How does a company get added or removed?",
+        "Is the S&P 500 the same as the Dow?"
+      ]
+    },
+    {
+      "title": "Why big companies count more",
+      "read": [
+        "Companies don’t all count the same. Each one counts in proportion to its market value: share price times the number of shares. This is called market-cap weighting.",
+        "A company worth $3 trillion moves the index far more than one worth $30 billion. Group them by sector and it shows clearly: Information Technology alone is about {{sector:Information Technology.weight}}% of the S&P 500."
+      ],
+      "snapshot": {
+        "type": "weights",
+        "where": "Market Weather · sector weights",
+        "caption": "Each bar is a sector’s share of the index. The top two sectors carry {{top2.weight}}% of it."
+      },
+      "mistake": "A big jump in a small company barely registers. A small move in a giant can move the whole index.",
+      "question": {
+        "prompt": "Two companies each rise 10% today. One is worth $2 trillion, the other $20 billion. Which nudges the S&P 500 more?",
+        "options": [
+          {
+            "text": "Both the same — they rose by the same percentage.",
+            "feedback": "That would be true if every company counted equally. In the S&P 500, bigger companies carry more weight."
+          },
+          {
+            "text": "The $2 trillion company — it carries about a hundred times more weight.",
+            "feedback": "Right. Same percentage move, but a hundred times the weight, so a hundred times the effect on the index.",
+            "correct": true
+          },
+          {
+            "text": "The smaller one, because small companies swing the index more.",
+            "feedback": "Small companies often swing more themselves, but their weight is tiny, so their effect on the index is small."
+          }
+        ]
+      },
+      "explore": [
+        "Are there indexes where every company counts equally?",
+        "What does market cap actually mean?"
+      ]
+    },
+    {
+      "title": "Points and percent",
+      "read": [
+        "Index moves are reported two ways: in points, the change in the number itself, and in percent.",
+        "Points depend on how high the index already is, so they’re hard to compare over time. Percent is the fair comparison. A 60-point fall is about 1% with the index near 6,000, but was about 15% in the early 1990s, when the index sat near 400."
+      ],
+      "snapshot": {
+        "type": "quote",
+        "where": "Stock Detail and Market Weather · index quote",
+        "caption": "Across Trendably, moves are shown in percent so different days can be compared fairly."
+      },
+      "mistake": "Headlines like “biggest point drop ever” can sound worse than they are. Check the percent before reacting.",
+      "question": {
+        "prompt": "Day A: the index falls 40 points from 2,000. Day B: it falls 60 points from 6,000. Which was the bigger move?",
+        "options": [
+          {
+            "text": "Day B — it lost more points.",
+            "feedback": "More points, but from a much higher level. 60 out of 6,000 is 1%."
+          },
+          {
+            "text": "They were about the same.",
+            "feedback": "Work out each as a share of where the index started: 40 of 2,000 versus 60 of 6,000."
+          },
+          {
+            "text": "Day A — it fell about 2%, twice as much as Day B.",
+            "feedback": "Right. 40 out of 2,000 is 2%; 60 out of 6,000 is 1%. Fewer points, bigger move.",
+            "correct": true
+          }
+        ]
+      },
+      "explore": [
+        "Why is the index number itself so high?",
+        "How do I work out a percent change?"
+      ]
+    },
+    {
+      "title": "One number, many different days",
+      "read": [
+        "Because an index is a weighted total, it can hide a lot. Today the S&P 500 moved {{index.moveSigned}}%, yet some sectors rose while others fell harder.",
+        "In today’s data, {{best.name}} moved {{best.moveSigned}}% while {{largest.name}} moved {{largest.moveSigned}}%. Because {{largest.name}} is the largest sector, its move weighs most on the index."
+      ],
+      "snapshot": {
+        "type": "moves",
+        "where": "Market Weather · today’s sector moves",
+        "caption": "{{count.down}} sectors fell and {{count.up}} rose, yet the single number at the bottom is all most headlines report."
+      },
+      "mistake": "“The market was down” doesn’t mean your stock was down. Look beneath the index before drawing conclusions.",
+      "question": {
+        "prompt": "The index closes slightly lower. What can you safely conclude?",
+        "options": [
+          {
+            "text": "The weighted total of its companies fell — individual stocks and sectors may still have risen.",
+            "feedback": "Right. That’s all one index number can tell you; the detail lives underneath it.",
+            "correct": true
+          },
+          {
+            "text": "Most of the companies in it fell.",
+            "feedback": "Not necessarily. A few very large companies falling can outweigh many smaller ones rising."
+          },
+          {
+            "text": "Every sector fell, just by different amounts.",
+            "feedback": "Sectors can move in opposite directions on the same day, as the snapshot above shows."
+          }
+        ]
+      },
+      "explore": [
+        "Where in Trendably do I look beneath the index?",
+        "Can the index rise while most stocks fall?"
+      ]
+    }
+  ],
+  "recap": [
+    "An index is one number that summarises a group of stocks. It’s a measurement, not something you own.",
+    "The S&P 500 covers about 500 large US-listed companies, roughly 80% of US market value.",
+    "Bigger companies count more, in proportion to their market value.",
+    "Compare index moves in percent, not points.",
+    "One index number can hide very different moves underneath."
+  ],
+  "next": {
+    "id": "foundations/market-as-a-whole/sectors-and-industries",
+    "title": "Sectors and industries"
+  },
+  "tutorContext": "Elsewhere in this chapter: sectors and industries are Lesson 2; ETFs and index funds are Lesson 3. If a question belongs there, give a short honest answer and say where it is covered."
+}
+</script>
+<script>
+/* =====================================================================
+   Trendably · Study Room lesson template
+   One template renders every lesson. Content comes from a lesson JSON
+   (schema: see HANDOVER.md). Market figures come from MARKET (sample now,
+   live feed later) and are written into lesson text through {{tokens}}.
+   Load order: ?lesson=<id>  →  fetch lessons/<id>.json  →  inline fallback.
+   ===================================================================== */
+(function(){
+  var root=document.documentElement;
+  try{ var m=localStorage.getItem('tb-mode'); root.setAttribute('data-mode', m||'light'); }catch(e){ root.setAttribute('data-mode','light'); }
+  document.getElementById('themeBtn').addEventListener('click',function(){
+    var d=root.getAttribute('data-mode')==='dark'; root.setAttribute('data-mode',d?'light':'dark');
+    try{localStorage.setItem('tb-mode',d?'light':'dark');}catch(e){}
+  });
+  var nd=document.getElementById('navDrawer');
+  document.getElementById('menuBtn').addEventListener('click',function(){nd.classList.add('open');});
+  document.getElementById('navScrim').addEventListener('click',function(){nd.classList.remove('open');});
+
+  var $=function(id){return document.getElementById(id);};
+  function inline(id){ try{ return JSON.parse($(id).textContent); }catch(e){ return null; } }
+
+  /* Where the Study Room lives. In the app: 'study-room.html'. */
+  var STUDY_ROOM = 'https://claude.ai/artifact/HmwxtnPK5TkhfD77Zsosv9';
+  var IN_APP = /^https?:$/.test(location.protocol) && !/claude\.ai|claudeusercontent/.test(location.host);
+  if(IN_APP) STUDY_ROOM='study-room.html';
+
+  var MARKET = inline('market-data');   // replace with the live feed
+  var wanted = new URLSearchParams(location.search).get('lesson');
+  var fallback = inline('lesson-data');
+
+  function load(){
+    if(IN_APP && wanted){
+      return fetch('lessons/'+wanted+'.json').then(function(r){ if(!r.ok) throw 0; return r.json(); }).catch(function(){ return fallback; });
+    }
+    return Promise.resolve(fallback);
+  }
+  load().then(function(L){ render(L, MARKET); });
+
+  /* ---------- market tokens ---------- */
+  function sg(v){ return (v>0?'+':v<0?'−':'')+Math.abs(v).toFixed(1); }
+  function facts(M){
+    var S=M.sectors.slice(), byW=S.slice().sort(function(a,b){return b.weight-a.weight;}), byM=S.slice().sort(function(a,b){return b.move-a.move;});
+    var f={'index.move':Math.abs(M.index.move).toFixed(1),'index.moveSigned':sg(M.index.move),'index.level':M.index.level.toLocaleString('en-US',{minimumFractionDigits:2}),
+      'index.points':sg(M.index.points),'count.up':S.filter(function(s){return s.move>0;}).length,'count.down':S.filter(function(s){return s.move<0;}).length,
+      'top2.weight':byW[0].weight+byW[1].weight};
+    [['best',byM[0]],['worst',byM[byM.length-1]],['largest',byW[0]]].forEach(function(p){ f[p[0]+'.name']=p[1].name; f[p[0]+'.move']=Math.abs(p[1].move).toFixed(1); f[p[0]+'.moveSigned']=sg(p[1].move); f[p[0]+'.weight']=p[1].weight; });
+    S.forEach(function(s){ f['sector:'+s.name+'.weight']=s.weight; f['sector:'+s.name+'.move']=Math.abs(s.move).toFixed(1); f['sector:'+s.name+'.moveSigned']=sg(s.move); });
+    return f;
+  }
+  function fill(str,F){ return String(str).replace(/\{\{([^}]+)\}\}/g,function(_,k){ k=k.trim(); return k in F ? F[k] : '—'; }); }
+
+  /* ---------- app snapshots, drawn from MARKET ---------- */
+  function snapshot(type,M){
+    var S=M.sectors, idx=M.index, cls=function(v){return v>=0?'pos':'neg';}, maxW=Math.max.apply(null,S.map(function(s){return s.weight;}));
+    switch(type){
+      case 'strip': return '<div class="s-strip">'+M.strip.map(function(x,i){ return '<span'+(i===0?' class="hl"':'')+'>'+x[0]+' <b'+(x[2]?' class="'+cls(x[1])+'"':'')+'>'+(x[2]?sg(x[1])+x[2]:x[1])+'</b></span>'; }).join('')+'</div>';
+      case 'grid': return '<div class="s-grid-h"><b>'+idx.name+'</b><span>about 500 companies · '+S.length+' sectors</span></div><div class="s-chips">'+S.map(function(s){return '<span>'+s.name+'</span>';}).join('')+'</div>';
+      case 'weights': return '<div class="s-bars">'+S.slice().sort(function(a,b){return b.weight-a.weight;}).map(function(s,i){return '<div class="s-bar'+(i===0?' big':'')+'"><span>'+s.name+'</span><i style="width:'+(s.weight/maxW*100)+'%"></i><em>'+s.weight+'%</em></div>';}).join('')+'</div>';
+      case 'quote': var p=sg(idx.points), pc=sg(idx.move)+'%'; return '<div class="s-quote"><span class="nm">'+idx.name+' · index level</span><span class="lvl">'+idx.level.toLocaleString('en-US',{minimumFractionDigits:2})+'</span><span class="chg '+cls(idx.move)+'"><u>'+p+'</u> &nbsp;<u>'+pc+'</u></span></div><div class="s-legend"><span>'+p+' = points</span><span>'+pc+' = percent</span></div>';
+      case 'moves': return '<div class="s-moves">'+S.slice().sort(function(a,b){return b.move-a.move;}).map(function(s){return '<div class="s-move"><span>'+s.name+'</span><b class="'+cls(s.move)+'">'+sg(s.move)+'%</b></div>';}).join('')+'<div class="s-move idx"><span>'+idx.name+' overall</span><b class="'+cls(idx.move)+'">'+sg(idx.move)+'%</b></div></div>';
+      default: return '<div class="s-empty">Snapshot “'+type+'” not built yet</div>';
+    }
+  }
+
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+  var ICON='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M3 9h18"/></svg>';
+  var OK='<svg class="ok" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-10"/></svg><svg class="no" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+
+  function render(L,M){
+    var F=facts(M), T=function(s){ return fill(s,F); };
+    var C=L.concepts, N=C.length;
+
+    /* header + breadcrumb */
+    document.title=L.title+' — Study Room · Trendably';
+    $('crumbs').innerHTML='<a href="'+STUDY_ROOM+'" target="_top">Study Room</a><span class="sep">›</span>'+
+      '<a href="'+STUDY_ROOM+'#'+L.tier.id+'" target="_top">'+L.tier.title+'</a><span class="sep">›</span>'+
+      '<a href="'+STUDY_ROOM+'#'+L.chapter.id+'" target="_top">'+L.chapter.title+'</a><span class="sep">›</span><span class="here">'+L.title+'</span>';
+    $('kicker').textContent='Lesson '+L.number+' of '+L.lessonsInChapter+' · about '+L.minutes+' minutes';
+    $('lTitle').textContent=L.title;
+    $('lIntro').textContent=T(L.intro);
+
+    /* progress (per viewer, this browser) — key tb-study[lesson.id] */
+    var st={done:[],at:0};
+    try{ var all=JSON.parse(localStorage.getItem('tb-study')||'{}'); if(all[L.id]) st=all[L.id]; }catch(e){}
+    function save(){ try{ var all=JSON.parse(localStorage.getItem('tb-study')||'{}'); st.title=L.title; st.concepts=C.map(function(c){return c.title;}); st.updated=Date.now(); all[L.id]=st; localStorage.setItem('tb-study',JSON.stringify(all)); }catch(e){} }
+    var cur=0;
+
+    var html='';
+    C.forEach(function(c,i){
+      html+='<section class="card" id="c'+i+'" data-i="'+i+'">'+
+        '<div class="section-head"><h2>'+c.title+'</h2><span class="n">'+(i+1)+' of '+N+'</span></div>'+
+        '<div class="read">'+c.read.map(function(p){return '<p>'+T(p)+'</p>';}).join('')+(c.aside?'<p class="aside">'+T(c.aside)+'</p>':'')+'</div>'+
+        (c.snapshot?'<div class="snap"><div class="snap-bar">'+ICON+'In Trendably · '+c.snapshot.where+'</div><div class="snap-body">'+snapshot(c.snapshot.type,M)+'</div></div><p class="snap-cap">'+T(c.snapshot.caption)+'</p>':'')+
+        (c.mistake?'<div class="mistake"><h4>Common mistake</h4><p>'+T(c.mistake)+'</p></div>':'')+
+        '<div class="check"><h4>Check your understanding</h4><p class="q">'+T(c.question.prompt)+'</p><div class="opts" role="group" aria-label="Answers">'+
+          c.question.options.map(function(o,k){return '<button class="opt" data-k="'+k+'"><span class="mk">'+OK+'</span><span>'+T(o.text)+'</span></button>';}).join('')+
+        '</div><div class="fb-slot" aria-live="polite"></div></div>'+
+        '<div class="after"><div class="explore"><span>Explore with the tutor</span>'+(c.explore||[]).map(function(e){return '<button class="ask" data-q="'+esc(e)+'">'+e+'</button>';}).join('')+'</div>'+
+        '<button class="next" data-go="'+(i+1)+'">'+(i<N-1?'Next concept':'Finish lesson')+'</button></div>'+
+      '</section>';
+    });
+    var nextHref = L.next ? (IN_APP ? 'study-lesson.html?lesson='+encodeURIComponent(L.next.id) : STUDY_ROOM+'#'+L.chapter.id) : STUDY_ROOM+'#'+L.chapter.id;
+    html+='<section class="card recap" id="c'+N+'"><div class="section-head"><h2>You’ve learned</h2></div>'+
+      '<p class="status" id="recapStatus"></p><ol>'+L.recap.map(function(r){return '<li>'+T(r)+'</li>';}).join('')+'</ol>'+
+      '<div class="row">'+(L.next?'<a class="btn2 pri" href="'+nextHref+'" target="_top">Next lesson: '+L.next.title+'</a>':'')+
+      '<a class="btn2" href="'+STUDY_ROOM+'#'+L.chapter.id+'" target="_top">Back to '+L.chapter.title+'</a></div></section>';
+    $('concepts').innerHTML=html;
+    $('dots').innerHTML=C.map(function(c,i){return '<button aria-label="Go to concept '+(i+1)+': '+esc(c.title)+'" data-go="'+i+'"></button>';}).join('');
+
+    function correctIndex(i){ return C[i].question.options.findIndex(function(o){return o.correct;}); }
+    function solve(card,k,silent){
+      var i=+card.dataset.i, o=C[i].question.options[k], opts=card.querySelector('.opts'), b=opts.children[k], fb=card.querySelector('.fb-slot');
+      var right=!!o.correct;
+      b.classList.add(right?'right':'wrong'); b.disabled=true;
+      if(!silent) fb.innerHTML='<p class="fb '+(right?'yes':'no')+'">'+(right?'':'<b>Not quite.</b> ')+T(o.feedback)+(right?'':' Try another answer.')+'</p>';
+      if(right){
+        opts.classList.add('solved'); [].forEach.call(opts.children,function(x){x.disabled=true;});
+        card.classList.add('solved');
+        if(silent) fb.innerHTML='<p class="fb yes">'+T(o.feedback)+'</p>';
+        if(st.done.indexOf(i)<0){ st.done.push(i); save(); }
+        paint();
+      }
+    }
+    $('concepts').addEventListener('click',function(e){
+      var o=e.target.closest('.opt'); if(o&&!o.disabled){ solve(o.closest('.card'),+o.dataset.k); return; }
+      var a=e.target.closest('.ask'); if(a){ openTutor(a.dataset.q); return; }
+      var n=e.target.closest('[data-go]'); if(n){ goTo(+n.dataset.go); }
+    });
+    $('dots').addEventListener('click',function(e){ var n=e.target.closest('[data-go]'); if(n) goTo(+n.dataset.go); });
+    function goTo(i){ var el=$('c'+i); if(!el) return; var top=el.getBoundingClientRect().top+window.scrollY-$('top').offsetHeight-12; window.scrollTo({top:top,behavior:'smooth'}); }
+
+    function paint(){
+      [].forEach.call($('dots').children,function(d,i){ d.classList.toggle('done',st.done.indexOf(i)>=0); d.classList.toggle('now',i===cur); });
+      var c=C[Math.min(cur,N-1)];
+      $('posNow').innerHTML= cur>=N ? 'Lesson recap <span>· '+st.done.length+' of '+N+' concepts checked</span>' : 'Concept '+(cur+1)+' of '+N+' <span>· '+c.title+'</span>';
+      $('recapStatus').textContent = st.done.length===N ? 'All '+N+' concepts checked.' : st.done.length+' of '+N+' concepts checked. You can go back to any of them using the bars at the top.';
+      $('tCtx').textContent = cur>=N ? L.title+' · lesson recap' : 'Concept '+(cur+1)+' · '+c.title;
+    }
+    st.done.slice().forEach(function(i){ var card=$('c'+i); if(card) solve(card,correctIndex(i),true); });
+    function onScroll(){
+      var line=$('top').offsetHeight+window.innerHeight*0.3, n=0;
+      for(var i=0;i<=N;i++){ var el=$('c'+i); if(el.getBoundingClientRect().top<line) n=i; }
+      if(n!==cur){ cur=n; if(cur<N){ st.at=cur; save(); } paint(); }
+    }
+    window.addEventListener('scroll',onScroll,{passive:true});
+    paint();
+    if(st.at>0){ setTimeout(function(){ goTo(st.at); },60); }
+
+    /* ---------- tutor ---------- */
+    var sample=null, busy=false, history=[];
+    if(window.claude&&window.claude.use){ window.claude.use('sample').then(function(s){ sample=s; if(!s) offline(); }).catch(offline); } else offline();
+    function offline(){ $('tNote').textContent='Preview: the tutor gives sample replies here. In the app it answers live.'; }
+    function sys(){
+      var c=C[Math.min(cur,N-1)];
+      return 'You are the tutor inside the Trendably Study Room, talking with a learner.\n'+
+        'Tier: '+L.tier.title+'. Chapter: '+L.chapter.title+'. Lesson: '+L.title+' ('+N+' concepts: '+C.map(function(x){return x.title;}).join('; ')+').\n'+
+        'The learner is reading concept '+(Math.min(cur,N-1)+1)+': "'+c.title+'". Its text: '+c.read.map(T).join(' ')+'\n'+
+        'Figures in the app today: '+M.index.name+' '+sg(M.index.move)+'%. Sectors (share of index, move): '+M.sectors.map(function(s){return s.name+' '+s.weight+'%, '+sg(s.move)+'%';}).join('; ')+'.\n'+
+        (L.tutorContext?L.tutorContext+'\n':'')+
+        'Style: plain, warm, precise. Under 100 words. One idea at a time. No headings, lists or markdown. If you use an analogy, also state the real idea.\n'+
+        'Boundary: explain how markets work. Never recommend buying, selling or holding anything, and never predict prices. If asked, say kindly that you can explain how to think about it but not what to do.';
+    }
+    function bubble(cls,text){ var d=document.createElement('div'); d.className='msg '+cls; d.textContent=text; $('chat').appendChild(d); $('chat').scrollTop=$('chat').scrollHeight; return d; }
+    function send(text){
+      text=(text||'').trim(); if(!text||busy) return;
+      $('starters').style.display='none';
+      bubble('me',text); history.push({role:'user',content:text});
+      var out=bubble('tu wait','Thinking…'); busy=true; $('tSend').disabled=true;
+      var done=function(t){ out.classList.remove('wait'); out.textContent=t; history.push({role:'assistant',content:t}); busy=false; $('tSend').disabled=false; $('chat').scrollTop=$('chat').scrollHeight; };
+      if(!sample){ setTimeout(function(){ done('In the live app I’d answer this using the concept you’re on — “'+C[Math.min(cur,N-1)].title+'”. Here in the preview I can only show how the conversation will look.'); },500); return; }
+      var msgs=[{role:'user',content:sys()+'\n\nReply "Ready." to confirm.'},{role:'assistant',content:'Ready.'}].concat(history.slice(-10));
+      sample(msgs,{cache:false,modelTier:'quick',onText:function(p){ if(p.text){ out.classList.remove('wait'); out.textContent=p.text; $('chat').scrollTop=$('chat').scrollHeight; } }})
+        .then(function(r){ done(r.text); })
+        .catch(function(err){ done(err&&err.code==='rate_limited'?'Lots of questions at once — give it a moment and ask again.':'The tutor couldn’t answer just now. Try asking again.'); });
+    }
+    function openTutor(q){
+      $('tScrim').classList.add('open'); $('tSheet').classList.add('open'); $('tSheet').setAttribute('aria-hidden','false');
+      if(q) send(q); else setTimeout(function(){ $('tInput').focus(); },300);
+    }
+    function closeTutor(){ $('tScrim').classList.remove('open'); $('tSheet').classList.remove('open'); $('tSheet').setAttribute('aria-hidden','true'); }
+    $('tutorBtn').addEventListener('click',function(){ openTutor(); });
+    $('tClose').addEventListener('click',closeTutor); $('tScrim').addEventListener('click',closeTutor);
+    document.addEventListener('keydown',function(e){ if(e.key==='Escape') closeTutor(); });
+    $('starters').addEventListener('click',function(e){ var a=e.target.closest('.ask'); if(a) send(a.dataset.q); });
+    $('tSend').addEventListener('click',function(){ var v=$('tInput').value; $('tInput').value=''; send(v); });
+    $('tInput').addEventListener('keydown',function(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); $('tSend').click(); } });
+  }
+})();
+</script>
+
+</body>
+</html>

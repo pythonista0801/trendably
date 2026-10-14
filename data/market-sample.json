@@ -1,0 +1,88 @@
+{
+  "asOf": "sample",
+  "index": {
+    "name": "S&P 500",
+    "level": 6612.4,
+    "points": -39.9,
+    "move": -0.6
+  },
+  "strip": [
+    [
+      "S&P 500",
+      -0.6,
+      "%"
+    ],
+    [
+      "NASDAQ",
+      -0.9,
+      "%"
+    ],
+    [
+      "Dow Jones",
+      -0.2,
+      "%"
+    ],
+    [
+      "VIX",
+      16.1,
+      ""
+    ]
+  ],
+  "sectors": [
+    {
+      "name": "Information Technology",
+      "weight": 38,
+      "move": -1.4
+    },
+    {
+      "name": "Financials",
+      "weight": 13,
+      "move": -0.1
+    },
+    {
+      "name": "Consumer Discretionary",
+      "weight": 10,
+      "move": -0.7
+    },
+    {
+      "name": "Communication Services",
+      "weight": 10,
+      "move": -0.4
+    },
+    {
+      "name": "Health Care",
+      "weight": 9,
+      "move": -0.6
+    },
+    {
+      "name": "Industrials",
+      "weight": 8,
+      "move": 0.2
+    },
+    {
+      "name": "Consumer Staples",
+      "weight": 5,
+      "move": 0.3
+    },
+    {
+      "name": "Energy",
+      "weight": 3,
+      "move": 1.8
+    },
+    {
+      "name": "Utilities",
+      "weight": 2,
+      "move": 0.9
+    },
+    {
+      "name": "Materials",
+      "weight": 2,
+      "move": 0.1
+    },
+    {
+      "name": "Real Estate",
+      "weight": 2,
+      "move": -0.3
+    }
+  ]
+}
