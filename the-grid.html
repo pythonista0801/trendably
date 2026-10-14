@@ -686,13 +686,14 @@
 
     selectedStocks.forEach(function(stock){
       var ticker = stock[0];
+      var displayTicker = ticker.replace('-', '.');  // BRK-B -> BRK.B for display
       var rets = stratObjs.map(function(s){ return { id: s.id, ret: returnFor(ticker, s.id) }; });
 
       // Filter out null results and find best
       var validRets = rets.filter(function(r){ return r.ret !== null; });
       var best = validRets.length > 0 ? validRets.reduce(function(a,b){ return b.ret > a.ret ? b : a; }, validRets[0]) : null;
 
-      html += '<tr><td class="row-h"><a href="#">' + ticker + '</a></td>';
+      html += '<tr><td class="row-h"><a href="#">' + displayTicker + '</a></td>';
       rets.forEach(function(r){
         if(r.ret === null){
           html += '<td><span style="color:var(--text4);">—</span></td>';

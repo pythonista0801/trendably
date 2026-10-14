@@ -693,8 +693,9 @@
     chip.className = 'ticker-chip' + (idx===state.tickerIdx ? ' active' : '');
     chip.dataset.ticker = tk.t.toLowerCase();
     chip.dataset.name = tk.name.toLowerCase();
+    var displayTicker = tk.t.replace('-', '.');  // BRK-B -> BRK.B for display
     chip.innerHTML =
-      '<div class="tc-tk">'+tk.t+'</div>' +
+      '<div class="tc-tk">'+displayTicker+'</div>' +
       '<div class="tc-px">$'+tk.price.toFixed(2)+'</div>' +
       '<div class="tc-chg" style="color:'+(tk.chg>=0?'var(--green)':'var(--red)')+';">'+(tk.chg>=0?'+':'')+tk.chg.toFixed(2)+'%</div>';
     chip.addEventListener('click', function(){
@@ -772,7 +773,8 @@
   function colorForRet(r){ return r >= 0 ? 'var(--green)' : 'var(--red)'; }
 
   function renderSummary(ticker, strat){
-    document.getElementById('sumTicker').textContent = ticker.t;
+    var displayTicker = ticker.t.replace('-', '.');  // BRK-B -> BRK.B for display
+    document.getElementById('sumTicker').textContent = displayTicker;
     document.getElementById('sumName').textContent = ticker.name;
     document.getElementById('sumStrat').textContent = strat.name;
     document.getElementById('sumPx').innerHTML = '$'+ticker.price.toFixed(2)+' <span style="font-size:0.7rem;color:var(--text4);font-weight:400;">(sample)</span>';
@@ -780,9 +782,9 @@
     chgEl.textContent = (ticker.chg>=0?'+':'')+(ticker.price*ticker.chg/100).toFixed(2)+' ('+(ticker.chg>=0?'+':'')+ticker.chg.toFixed(2)+'%) today';
     chgEl.className = 'chg ' + (ticker.chg>=0?'pos':'neg');
     document.getElementById('stockDetailLink').href = 'stock-detail.html?sym=' + encodeURIComponent(ticker.t);
-    document.getElementById('stockDetailLink').querySelector('span').textContent = 'Want the full picture on '+ticker.t+' first? Open Stock Detail';
+    document.getElementById('stockDetailLink').querySelector('span').textContent = 'Want the full picture on '+displayTicker+' first? Open Stock Detail';
     document.getElementById('studyRoomLink').querySelector('span').textContent = 'New to '+strat.name+'? Study Room explains the mechanics';
-    document.getElementById('vsLabel').textContent = 'Strategy return vs. simply buying and holding ' + ticker.t;
+    document.getElementById('vsLabel').textContent = 'Strategy return vs. simply buying and holding ' + displayTicker;
   }
 
   function renderPerf(res){
