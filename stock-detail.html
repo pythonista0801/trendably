@@ -397,7 +397,8 @@
     var priceDisplay = stockData.change >= 0 ? '+' + stockData.change : stockData.change;
     var moveDisplay = stockData.move >= 0 ? '+' + stockData.move + '%' : stockData.move + '%';
     var priceClass = stockData.move >= 0 ? 'pos' : 'neg';
-    document.querySelector('.stock-id').insertAdjacentHTML('afterend',
+    var sid = document.querySelector('.stock-id');
+    if (sid) sid.insertAdjacentHTML('afterend',
       '<div class="price-row"><div class="px">$' + stockData.price + '</div>' +
       '<div class="chg ' + priceClass + '">' + priceDisplay + ' (' + moveDisplay + ')</div></div>');
 
