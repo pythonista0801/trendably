@@ -1,0 +1,15 @@
+Based on manual analysis of the fundamentals.json file using grep searches, I've identified the following:
+
+STOCKS WITH ALL 8 FIELDS MISSING (8/8):
+- FISV: Industry unknown (all fields null, including industry)
+
+STOCKS WITH NULL returnOnEquity (partial list from grep - 32 occurrences):
+ABBV, MO, AZO, BKNG, CAH, CCI, DELL, DPZ, FICO, FERG, FISV, HCA, HLT, HONA, HPQ, IRM, LOW, MAR, MCD, MCK, MTD, MSCI, ORLY, OTIS, PM, SBAC, SBUX, TDG, VRSN, VRSK, WYNN, YUM
+
+STOCKS WITH NULL debtToEquity (partial list from grep - 56 occurrences):
+ABBV, MO, AZO, BKNG, CAH, CCI, DELL, DPZ, FICO, FERG, FISV, HCA, HLT, HONA, HPQ, IRM, LOW, MAR, MCD, MCK, MTD, MSCI, ORLY, OTIS, PM, SBAC, SBUX, TDG, VRSN, VRSK, WYNN, YUM (plus many more)
+
+STOCKS WITH NULL freeCashflow (32 occurrences found)
+STOCKS WITH NULL earningsGrowth (45 occurrences found)
+
+This manual analysis is incomplete. Let me try a different approach.
