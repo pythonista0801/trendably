@@ -111,6 +111,7 @@ GICS_SUB_TO_INDUSTRY = {
 
     # Industry: Auto Components
     "Auto Parts & Equipment": "Auto Components",
+    "Automotive Parts & Equipment": "Auto Components",
     "Tires & Rubber": "Auto Components",
 
     # Industry: Household Durables
@@ -211,10 +212,12 @@ GICS_SUB_TO_INDUSTRY = {
 
     # Industry: Containers & Packaging
     "Metal, Glass & Plastic Containers": "Containers & Packaging",
+    "Paper & Plastic Packaging Products & Materials": "Containers & Packaging",
     "Paper Packaging": "Containers & Packaging",
 
     # Industry: Metals & Mining
     "Aluminum": "Metals & Mining",
+    "Copper": "Metals & Mining",
     "Diversified Metals & Mining": "Metals & Mining",
     "Gold": "Metals & Mining",
     "Precious Metals & Minerals": "Metals & Mining",
@@ -276,6 +279,7 @@ GICS_SUB_TO_INDUSTRY = {
     # Industry: Ground Transportation
     "Cargo Ground Transportation": "Ground Transportation",
     "Passenger Ground Transportation": "Ground Transportation",
+    "Rail Transportation": "Ground Transportation",
     "Railroads": "Ground Transportation",
 
     # Industry: Transportation Infrastructure
@@ -304,14 +308,21 @@ GICS_SUB_TO_INDUSTRY = {
     # ===== REAL ESTATE =====
 
     # Industry: Equity Real Estate Investment Trusts (REITs)
+    "Data Center REITs": "Equity Real Estate Investment Trusts (REITs)",
     "Diversified REITs": "Equity Real Estate Investment Trusts (REITs)",
     "Industrial REITs": "Equity Real Estate Investment Trusts (REITs)",
     "Hotel & Resort REITs": "Equity Real Estate Investment Trusts (REITs)",
+    "Multi-Family Residential REITs": "Equity Real Estate Investment Trusts (REITs)",
     "Office REITs": "Equity Real Estate Investment Trusts (REITs)",
+    "Other Specialized REITs": "Equity Real Estate Investment Trusts (REITs)",
     "Health Care REITs": "Equity Real Estate Investment Trusts (REITs)",
     "Residential REITs": "Equity Real Estate Investment Trusts (REITs)",
     "Retail REITs": "Equity Real Estate Investment Trusts (REITs)",
+    "Self-Storage REITs": "Equity Real Estate Investment Trusts (REITs)",
+    "Single-Family Residential REITs": "Equity Real Estate Investment Trusts (REITs)",
     "Specialized REITs": "Equity Real Estate Investment Trusts (REITs)",
+    "Telecom Tower REITs": "Equity Real Estate Investment Trusts (REITs)",
+    "Timber REITs": "Equity Real Estate Investment Trusts (REITs)",
 
     # Industry: Real Estate Management & Development
     "Diversified Real Estate Activities": "Real Estate Management & Development",
@@ -397,7 +408,7 @@ def verify_coverage():
     # Check 1: Missing sub-industries
     if unmapped:
         errors = True
-        print(f"\n⚠️  {len(unmapped)} unmapped sub-industries found:")
+        print(f"\nWARNING: {len(unmapped)} unmapped sub-industries found:")
         for sector in sorted(sp500['gics_sector'].unique()):
             sector_subs = sp500[sp500['gics_sector'] == sector]['gics_sub_industry'].unique()
             sector_unmapped = set(sector_subs) & unmapped
@@ -407,7 +418,7 @@ def verify_coverage():
                     count = len(sp500[sp500['gics_sub_industry'] == sub])
                     print(f"    - {sub} ({count} stocks)")
     else:
-        print("\n✓ All sub-industries are mapped!")
+        print("\nAll sub-industries are mapped!")
 
     # Check 2: Validate that industries belong to the correct sector
     # Build sector → industries mapping from actual S&P 500 data
@@ -436,7 +447,7 @@ def verify_coverage():
 
     if cross_sector:
         errors = True
-        print(f"\n⚠️  {len(cross_sector)} industries appear in multiple sectors (likely wrong mappings):")
+        print(f"\nWARNING: {len(cross_sector)} industries appear in multiple sectors (likely wrong mappings):")
         for industry, sectors in sorted(cross_sector.items()):
             print(f"\n  '{industry}' appears in:")
             for sector in sectors:
@@ -447,7 +458,7 @@ def verify_coverage():
                 ]['ticker'].head(3).tolist()
                 print(f"    - {sector}: {', '.join(examples)}")
     else:
-        print("✓ All industries are correctly scoped to single sectors!")
+        print("All industries are correctly scoped to single sectors!")
 
     return not errors
 
@@ -498,14 +509,14 @@ if __name__ == '__main__':
         actual_sub = stock.iloc[0]['gics_sub_industry']
 
         if actual_sector == expected_sector and actual_sub == expected_sub:
-            print(f"  ✓ {ticker}: {expected_sector} › {expected_sub}")
+            print(f"  OK {ticker}: {expected_sector} > {expected_sub}")
         else:
             all_correct = False
-            print(f"  ✗ {ticker}: Expected {expected_sector} › {expected_sub}")
-            print(f"           Got {actual_sector} › {actual_sub}")
+            print(f"  FAIL {ticker}: Expected {expected_sector} > {expected_sub}")
+            print(f"           Got {actual_sector} > {actual_sub}")
 
     if all_correct:
-        print("\n✓ All spot checks passed!")
+        print("\nAll spot checks passed!")
     print("\n" + "="*70 + "\n")
 
     # Run full coverage check

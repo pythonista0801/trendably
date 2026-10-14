@@ -22,7 +22,7 @@ except ImportError:
     exit(1)
 
 from config import DATA_DIR
-from universe import get_universe
+from universe import load_sp500
 
 
 def fetch_fundamental(ticker: str) -> dict:
@@ -154,9 +154,9 @@ def main():
         tickers = args.stocks
         print(f"Fetching specific stocks: {', '.join(tickers)}")
     else:
-        universe = get_universe()
-        tickers = [stock['ticker'] for stock in universe]
-        print(f"Fetching all stocks from universe ({len(tickers)} total)")
+        universe = load_sp500()
+        tickers = universe['ticker'].tolist()
+        print(f"Fetching all stocks from S&P 500 ({len(tickers)} total)")
 
     # If updating, load existing cache and only fetch missing
     if args.update:

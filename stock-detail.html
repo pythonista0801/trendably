@@ -353,100 +353,205 @@
   document.getElementById('menuBtn').addEventListener('click',function(){nd.classList.add('open');});
   document.getElementById('navScrim').addEventListener('click',function(){nd.classList.remove('open');});
 
-  var SYM='NVDA';
+  // Read ?sym= from URL, default to NVDA
+  var urlParams = new URLSearchParams(window.location.search);
+  var SYM = urlParams.get('sym') || 'NVDA';
 
-  // ---------- Sub-scores (higher = more favourable; for Risk and Valuation that means lower risk / cheaper) ----------
-  var subscores=[
-    {label:'Momentum',     value:85, band:'good', tag:'Strong uptrend',      g:'momentum'},
-    {label:'Risk',         value:54, band:'mid',  tag:'Moderate volatility', g:'risk'},
-    {label:'Valuation',    value:29, band:'bad',  tag:'Rich vs. sector',     g:'valuation'},
-    {label:'Fundamentals', value:88, band:'good', tag:'Robust growth',       g:'fundamentals'}
-  ];
-  // Proposed weights — the composite is calculated, never typed in
-  var W={Momentum:0.30, Risk:0.20, Valuation:0.20, Fundamentals:0.30};
-  var composite=subscores.reduce(function(a,s){return a+s.value*W[s.label];},0);
-  var scoreN=Math.round(composite);
-  document.getElementById('scoreN').textContent=scoreN;
-  document.getElementById('scoreTag').textContent= scoreN>=75?'Strong composite score': scoreN>=60?'Solid composite score': scoreN>=45?'Mixed composite score':'Weak composite score';
+  // Load stock data
+  var stockData = null;
+  var subscores = [];
 
-  var bandColor={good:'var(--green)', mid:'var(--sky)', bad:'var(--red)'};
-  var valColor={good:'var(--green)', mid:'var(--text1)', bad:'var(--red)'};
-  document.getElementById('subscoreGrid').innerHTML=subscores.map(function(s){
-    return '<button class="subscore-card" type="button" data-g="'+s.g+'" data-here="'+s.value+' / 100">'+
-      '<div class="sl">'+s.label+'</div><div class="sv" style="color:'+valColor[s.band]+'">'+s.value+'</div>'+
-      '<div class="bar-track"><div class="bar-fill" style="width:'+s.value+'%;background:'+bandColor[s.band]+'"></div></div>'+
-      '<div class="st">'+s.tag+'</div></button>';
-  }).join('');
-
-  // ---------- Indicator groups (cls: pos / neg / flat — "watch" values are shown in plain text colour) ----------
-  var groups=[
-    {title:'Price and performance', sub:'How the stock has actually moved, over several windows.', items:[
-      {label:'6-month return', value:'+34.2%', cls:'pos', meaning:'Well ahead of a typical broad-market six-month move.', learn:'Total return', primary:true},
-      {label:'1-year return', value:'+58.7%', cls:'pos', meaning:'Sustained gains across the full year, not a short-term spike.', learn:'Total return', primary:true},
-      {label:'Distance from 52-week high', value:'−4.1%', cls:'flat', meaning:'Trading close to its recent peak — limited near-term room before new highs.', learn:'52-week high and low', primary:true},
-      {label:'1-month return', value:'+6.8%', cls:'pos', meaning:'Short-term momentum is positive but can reverse quickly.', learn:'Total return'},
-      {label:'3-month return', value:'+19.5%', cls:'pos', meaning:'Consistent with the six-month trend — no sign of stalling.', learn:'Total return'},
-      {label:'52-week high / low', value:'$152.89 / $86.62', cls:'flat', meaning:'The full range traded over the past year — a sense of this stock\'s typical swing.', learn:'52-week high and low'}]},
-    {title:'Momentum and trend', sub:'Whether the stock is currently trending, and how strongly.', items:[
-      {label:'RSI (14-day)', value:'64', cls:'flat', meaning:'Approaching overbought territory — buying pressure is strong but stretched.', learn:'RSI', g:'rsi', primary:true},
-      {label:'Price vs. moving averages', value:'Above all 3', cls:'pos', meaning:'Trading above its 20-, 50- and 200-day averages — a healthy, confirmed uptrend.', learn:'Moving averages', primary:true},
-      {label:'Momentum score', value:'85 / 100', cls:'pos', meaning:'Trend strength and consistency combined — currently one of the strongest readings on the Grid.', learn:'Momentum score', g:'momentum', primary:true},
-      {label:'20 / 50 / 200-day averages', value:'$139 / $126 / $108', cls:'flat', meaning:'Each average sits below the last — a textbook bullish stack.', learn:'Moving averages'},
-      {label:'MACD', value:'+2.4, rising', cls:'pos', meaning:'The trend-following signal line is positive and climbing, confirming the uptrend.', learn:'MACD'}]},
-    {title:'Risk and volatility', sub:'How bumpy the ride has been, historically.', items:[
-      {label:'Annualised volatility', value:'38.6%', cls:'flat', meaning:'Noticeably more volatile than the broad market\'s usual 15–20%.', learn:'Volatility', g:'volatility', primary:true},
-      {label:'Beta', value:'1.72', cls:'flat', meaning:'Tends to move about 70% more than the overall market, in either direction.', learn:'Beta', g:'beta', primary:true},
-      {label:'Max drawdown (1 year)', value:'−21.4%', cls:'flat', meaning:'The largest peak-to-trough decline seen over the past year.', learn:'Max drawdown', g:'drawdown', primary:true},
-      {label:'Downside volatility', value:'24.1%', cls:'flat', meaning:'Volatility measured only on down days — a cleaner read on the actual risk of loss.', learn:'Downside volatility'},
-      {label:'Sharpe ratio', value:'1.38', cls:'pos', meaning:'Solid risk-adjusted return — gains have compensated for the volatility taken on.', learn:'Sharpe ratio'}]},
-    {title:'Valuation', sub:'What the market is currently paying for this stock.', items:[
-      {label:'P/E (trailing / forward)', value:'54.1 / 38.9', cls:'flat', meaning:'Priced for continued strong growth — a lot is already assumed in today\'s price.', learn:'P/E ratio', g:'pe', primary:true},
-      {label:'vs. sector median P/E', value:'+61%', cls:'flat', meaning:'Trading well above what the typical semiconductor stock commands.', learn:'Sector-relative valuation', primary:true},
-      {label:'EV/EBITDA', value:'41.3', cls:'flat', meaning:'A rich multiple on cash earnings, consistent with the elevated P/E.', learn:'EV/EBITDA', primary:true},
-      {label:'Price-to-sales', value:'26.1', cls:'flat', meaning:'Very high relative to revenue — typical of a dominant-growth story stock.', learn:'Price-to-sales'},
-      {label:'Price-to-book', value:'48.7', cls:'flat', meaning:'Market value far exceeds book value — common for asset-light, high-margin businesses.', learn:'Price-to-book'}]},
-    {title:'Fundamentals', sub:'What the underlying business actually looks like.', items:[
-      {label:'Revenue growth (year on year)', value:'+94.3%', cls:'pos', meaning:'Exceptional top-line growth, far outpacing sector peers.', learn:'Revenue growth', primary:true},
-      {label:'EPS growth (year on year)', value:'+111.7%', cls:'pos', meaning:'Earnings growing even faster than revenue — margins are expanding.', learn:'EPS growth', primary:true},
-      {label:'Profit margin', value:'55.0%', cls:'pos', meaning:'Exceptionally high profitability for a hardware business.', learn:'Profit margin', primary:true},
-      {label:'Return on equity', value:'91.4%', cls:'pos', meaning:'Very efficient use of shareholder capital to generate profit.', learn:'Return on equity'},
-      {label:'Free cash flow (12 months)', value:'$27.1B', cls:'pos', meaning:'Ample cash generation to fund growth without relying on debt.', learn:'Free cash flow'},
-      {label:'Debt-to-equity', value:'0.17', cls:'pos', meaning:'Very low leverage — the balance sheet carries little financial risk.', learn:'Debt-to-equity'}]},
-    {title:'Trading and activity', sub:'How liquid and actively traded the stock currently is.', items:[
-      {label:'Average daily volume (30 days)', value:'218M shares', cls:'flat', meaning:'Among the most actively traded stocks in the market — very easy to enter or exit.', learn:'Volume', primary:true},
-      {label:'Today vs. average volume', value:'+32%', cls:'flat', meaning:'Trading noticeably more than usual — often a sign of fresh news or strong interest.', learn:'Volume', primary:true},
-      {label:'ATR (14-day)', value:'$4.87', cls:'flat', meaning:'Typical daily price swing in dollar terms — useful for setting stop levels.', learn:'Average true range'},
-      {label:'Liquidity', value:'Very high', cls:'pos', meaning:'Tight bid-ask spreads and deep order books — minimal cost to trade in size.', learn:'Liquidity'}]}
-  ];
-
-  var bookIcon='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>';
-  var chev='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>';
-  var ITEMS=[];
-  function esc(t){ return String(t).replace(/"/g,'&quot;'); }
-  function ind(it){
-    var i=ITEMS.push(it)-1;
-    return '<div class="ind-row"><div class="ind-main"><button class="term" type="button" data-i="'+i+'">'+it.label+'</button>'+
-      '<span class="ind-value '+it.cls+'">'+it.value+'</span></div>'+
-      '<div class="ind-meaning">'+it.meaning+'</div>'+
-      '<button class="learn-link" type="button" data-i="'+i+'">'+bookIcon+'Learn: '+it.learn+'</button></div>';
-  }
-  var list=document.getElementById('groupList');
-  groups.forEach(function(g,gi){
-    var prim=g.items.filter(function(x){return x.primary;}), rest=g.items.filter(function(x){return !x.primary;});
-    var card=document.createElement('section'); card.className='card group-card';
-    var h='<div class="section-head"><h2>'+g.title+'</h2><span class="step">'+(gi+1)+' / '+groups.length+'</span></div>'+
-      '<p class="section-sub">'+g.sub+'</p><div>'+prim.map(ind).join('')+'</div>';
-    if(rest.length){
-      h+='<div class="more-wrap"><div>'+rest.map(ind).join('')+'</div></div>'+
-        '<button class="see-all-btn" type="button"><span class="lbl">See all '+g.items.length+' indicators</span>'+chev+'</button>';
-    }
-    card.innerHTML=h; list.appendChild(card);
-    var btn=card.querySelector('.see-all-btn');
-    if(btn) btn.addEventListener('click',function(){
-      var open=card.classList.toggle('expanded'); card.querySelector('.more-wrap').classList.toggle('open',open);
-      btn.querySelector('.lbl').textContent=open?'Show less':'See all '+g.items.length+' indicators';
+  fetch('data/stocks/' + SYM + '.json')
+    .then(function(response) {
+      if (!response.ok) throw new Error('Stock not found');
+      return response.json();
+    })
+    .then(function(data) {
+      stockData = data;
+      initPage();
+    })
+    .catch(function(error) {
+      console.error('Failed to load stock data:', error);
+      document.getElementById('scoreN').textContent = '—';
+      document.getElementById('scoreTag').textContent = 'Data unavailable';
     });
-  });
+
+  function initPage() {
+    // Update page title and header
+    document.title = stockData.sym + ' · Stock Detail · Trendably';
+    document.querySelector('.stock-id .tk').textContent = stockData.sym;
+    document.querySelector('.stock-id .nm').textContent = stockData.name;
+
+    // Update breadcrumb (sector › industry)
+    var crumbs = document.querySelector('.crumbs');
+    crumbs.innerHTML = '<a href="market-weather.html">Market Weather</a><span>›</span>' +
+      '<a href="sector-technology.html">' + stockData.sector + '</a><span>›</span>' +
+      '<span>' + stockData.sym + '</span>';
+
+    // Update price in header
+    var priceDisplay = stockData.change >= 0 ? '+' + stockData.change : stockData.change;
+    var moveDisplay = stockData.move >= 0 ? '+' + stockData.move + '%' : stockData.move + '%';
+    var priceClass = stockData.move >= 0 ? 'pos' : 'neg';
+    document.querySelector('.stock-id').insertAdjacentHTML('afterend',
+      '<div class="price-row"><div class="px">$' + stockData.price + '</div>' +
+      '<div class="chg ' + priceClass + '">' + priceDisplay + ' (' + moveDisplay + ')</div></div>');
+
+    // Sub-scores (Stage 1: show sample labels)
+    if (stockData.score.composite !== null) {
+      var scoreN = stockData.score.composite;
+      subscores = [
+        {label:'Momentum',     value:stockData.score.momentum,     band:getBand(stockData.score.momentum),     tag:getScoreTag('momentum', stockData.score.momentum),     g:'momentum'},
+        {label:'Risk',         value:stockData.score.risk,         band:getBand(stockData.score.risk),         tag:getScoreTag('risk', stockData.score.risk),         g:'risk'},
+        {label:'Valuation',    value:stockData.score.valuation,    band:getBand(stockData.score.valuation),    tag:getScoreTag('valuation', stockData.score.valuation),    g:'valuation'},
+        {label:'Fundamentals', value:stockData.score.fundamentals, band:getBand(stockData.score.fundamentals), tag:getScoreTag('fundamentals', stockData.score.fundamentals), g:'fundamentals'}
+      ];
+    } else {
+      // Stage 1: scores pending
+      scoreN = '—';
+      subscores = [
+        {label:'Momentum',     value:'—', band:'mid', tag:'Sample', g:'momentum'},
+        {label:'Risk',         value:'—', band:'mid', tag:'Sample', g:'risk'},
+        {label:'Valuation',    value:'—', band:'mid', tag:'Sample', g:'valuation'},
+        {label:'Fundamentals', value:'—', band:'mid', tag:'Sample', g:'fundamentals'}
+      ];
+    }
+
+    var scoreN = stockData.score.composite || '—';
+    document.getElementById('scoreN').textContent = scoreN;
+    document.getElementById('scoreTag').textContent = scoreN === '—' ? 'Scores pending' :
+      (scoreN >= 75 ? 'Strong composite score' : scoreN >= 60 ? 'Solid composite score' :
+       scoreN >= 45 ? 'Mixed composite score' : 'Weak composite score');
+
+    // Helper functions for scores
+    function getBand(score) {
+      if (score === null) return 'mid';
+      return score >= 70 ? 'good' : score >= 40 ? 'mid' : 'bad';
+    }
+
+    function getScoreTag(type, score) {
+      if (score === null) return 'Sample';
+      var band = getBand(score);
+      var tags = {
+        momentum: {good: 'Strong uptrend', mid: 'Mixed momentum', bad: 'Weak momentum'},
+        risk: {good: 'Low volatility', mid: 'Moderate volatility', bad: 'High volatility'},
+        valuation: {good: 'Attractive', mid: 'Fairly valued', bad: 'Rich vs. sector'},
+        fundamentals: {good: 'Robust growth', mid: 'Steady', bad: 'Weak fundamentals'}
+      };
+      return tags[type][band];
+    }
+
+    // Render subscores
+    var bandColor={good:'var(--green)', mid:'var(--sky)', bad:'var(--red)'};
+    var valColor={good:'var(--green)', mid:'var(--text1)', bad:'var(--red)'};
+    document.getElementById('subscoreGrid').innerHTML=subscores.map(function(s){
+      var barWidth = s.value === '—' ? 0 : s.value;
+      return '<button class="subscore-card" type="button" data-g="'+s.g+'" data-here="'+s.value+' / 100">'+
+        '<div class="sl">'+s.label+'</div><div class="sv" style="color:'+valColor[s.band]+'">'+s.value+'</div>'+
+        '<div class="bar-track"><div class="bar-fill" style="width:'+barWidth+'%;background:'+bandColor[s.band]+'"></div></div>'+
+        '<div class="st">'+s.tag+'</div></button>';
+    }).join('');
+
+    // Build indicator groups from real data
+    buildIndicatorGroups();
+  }
+
+  function fmt(val) {
+    if (val === null || val === undefined) return '—';
+    return val;
+  }
+
+  function buildIndicatorGroups() {
+    var ind = stockData.indicators;
+
+    // Helper to format percentage
+    function fmtPct(val) {
+      if (val === null) return '—';
+      return (val >= 0 ? '+' : '') + val + '%';
+    }
+
+    // Helper to classify value
+    function cls(val) {
+      if (val === null) return 'flat';
+      return val > 0 ? 'pos' : val < 0 ? 'neg' : 'flat';
+    }
+
+    // Build groups array with real data
+    var groups = [
+      {title:'Price and performance', sub:'How the stock has actually moved, over several windows.', items:[
+        {label:'6-month return', value:fmtPct(ind.ret6m), cls:cls(ind.ret6m), meaning:'Placeholder meaning', learn:'Total return', primary:true},
+        {label:'1-year return', value:fmtPct(ind.ret1y), cls:cls(ind.ret1y), meaning:'Placeholder meaning', learn:'Total return', primary:true},
+        {label:'Distance from 52-week high', value:fmtPct(ind.fromHigh), cls:'flat', meaning:'Placeholder meaning', learn:'52-week high and low', primary:true},
+        {label:'1-month return', value:fmtPct(ind.ret1m), cls:cls(ind.ret1m), meaning:'Placeholder meaning', learn:'Total return'},
+        {label:'3-month return', value:fmtPct(ind.ret3m), cls:cls(ind.ret3m), meaning:'Placeholder meaning', learn:'Total return'},
+        {label:'52-week high / low', value:(ind.high52 ? '$'+ind.high52 : '—') + ' / ' + (ind.low52 ? '$'+ind.low52 : '—'), cls:'flat', meaning:'Placeholder meaning', learn:'52-week high and low'}
+      ]},
+      {title:'Momentum and trend', sub:'Whether the stock is currently trending, and how strongly.', items:[
+        {label:'RSI (14-day)', value:fmt(ind.rsi14), cls:'flat', meaning:'Placeholder meaning', learn:'RSI', g:'rsi', primary:true},
+        {label:'Price vs. moving averages', value:ind.aboveMAs === 3 ? 'Above all 3' : ind.aboveMAs === 2 ? 'Above 2 of 3' : ind.aboveMAs === 1 ? 'Above 1 of 3' : 'Below all 3', cls:ind.aboveMAs >= 2 ? 'pos' : 'neg', meaning:'Placeholder meaning', learn:'Moving averages', primary:true},
+        {label:'Momentum score', value:stockData.score.momentum ? stockData.score.momentum + ' / 100' : 'Pending', cls:stockData.score.momentum ? (stockData.score.momentum >= 70 ? 'pos' : 'flat') : 'flat', meaning:'Placeholder meaning', learn:'Momentum score', g:'momentum', primary:true},
+        {label:'20 / 50 / 200-day averages', value:(ind.sma20 ? '$'+ind.sma20 : '—') + ' / ' + (ind.sma50 ? '$'+ind.sma50 : '—') + ' / ' + (ind.sma200 ? '$'+ind.sma200 : '—'), cls:'flat', meaning:'Placeholder meaning', learn:'Moving averages'},
+        {label:'MACD', value:ind.macd !== null ? (ind.macd >= 0 ? '+' : '') + ind.macd + (ind.macdRising !== null ? (ind.macdRising ? ', rising' : ', falling') : '') : '—', cls:ind.macd > 0 ? 'pos' : ind.macd < 0 ? 'neg' : 'flat', meaning:'Placeholder meaning', learn:'MACD'}
+      ]},
+      {title:'Risk and volatility', sub:'How bumpy the ride has been, historically.', items:[
+        {label:'Annualised volatility', value:ind.vol !== null ? ind.vol + '%' : '—', cls:'flat', meaning:'Placeholder meaning', learn:'Volatility', g:'volatility', primary:true},
+        {label:'Beta', value:fmt(ind.beta), cls:'flat', meaning:'Placeholder meaning', learn:'Beta', g:'beta', primary:true},
+        {label:'Max drawdown (1 year)', value:ind.mdd1y !== null ? ind.mdd1y + '%' : '—', cls:'flat', meaning:'Placeholder meaning', learn:'Max drawdown', g:'drawdown', primary:true},
+        {label:'Downside volatility', value:ind.downVol !== null ? ind.downVol + '%' : '—', cls:'flat', meaning:'Placeholder meaning', learn:'Downside volatility'},
+        {label:'Sharpe ratio', value:fmt(ind.sharpe), cls:ind.sharpe > 1 ? 'pos' : 'flat', meaning:'Placeholder meaning', learn:'Sharpe ratio'}
+      ]},
+      {title:'Valuation', sub:'What the market is currently paying for this stock.', items:[
+        {label:'P/E (trailing / forward)', value:(ind.pe || '—') + ' / ' + (ind.fpe || '—'), cls:'flat', meaning:'Placeholder meaning', learn:'P/E ratio', g:'pe', primary:true},
+        {label:'vs. sector median P/E', value:ind.peVsSector !== null ? fmtPct(ind.peVsSector) : '—', cls:'flat', meaning:'Placeholder meaning', learn:'Sector-relative valuation', primary:true},
+        {label:'EV/EBITDA', value:fmt(ind.evEbitda), cls:'flat', meaning:'Placeholder meaning', learn:'EV/EBITDA', primary:true},
+        {label:'Price-to-sales', value:fmt(ind.ps), cls:'flat', meaning:'Placeholder meaning', learn:'Price-to-sales'},
+        {label:'Price-to-book', value:fmt(ind.pb), cls:'flat', meaning:'Placeholder meaning', learn:'Price-to-book'}
+      ]},
+      {title:'Fundamentals', sub:'What the underlying business actually looks like.', items:[
+        {label:'Revenue growth (year on year)', value:fmtPct(ind.revGrowth), cls:cls(ind.revGrowth), meaning:'Placeholder meaning', learn:'Revenue growth', primary:true},
+        {label:'EPS growth (year on year)', value:fmtPct(ind.epsGrowth), cls:cls(ind.epsGrowth), meaning:'Placeholder meaning', learn:'EPS growth', primary:true},
+        {label:'Profit margin', value:ind.margin !== null ? ind.margin + '%' : '—', cls:ind.margin > 20 ? 'pos' : 'flat', meaning:'Placeholder meaning', learn:'Profit margin', primary:true},
+        {label:'Return on equity', value:ind.roe !== null ? ind.roe + '%' : '—', cls:ind.roe > 15 ? 'pos' : 'flat', meaning:'Placeholder meaning', learn:'Return on equity'},
+        {label:'Free cash flow (12 months)', value:ind.fcf !== null ? '$' + (ind.fcf / 1e9).toFixed(1) + 'B' : '—', cls:ind.fcf > 0 ? 'pos' : 'flat', meaning:'Placeholder meaning', learn:'Free cash flow'},
+        {label:'Debt-to-equity', value:fmt(ind.de), cls:ind.de !== null && ind.de < 0.5 ? 'pos' : 'flat', meaning:'Placeholder meaning', learn:'Debt-to-equity'}
+      ]},
+      {title:'Trading and activity', sub:'How liquid and actively traded the stock currently is.', items:[
+        {label:'Average daily volume (30 days)', value:ind.avgVol30 !== null ? (ind.avgVol30 / 1e6).toFixed(0) + 'M shares' : '—', cls:'flat', meaning:'Placeholder meaning', learn:'Volume', primary:true},
+        {label:'Today vs. average volume', value:fmtPct(ind.volVsAvg), cls:'flat', meaning:'Placeholder meaning', learn:'Volume', primary:true},
+        {label:'ATR (14-day)', value:ind.atr14 !== null ? '$' + ind.atr14 : '—', cls:'flat', meaning:'Placeholder meaning', learn:'Average true range'},
+        {label:'Liquidity', value:ind.liquidity || '—', cls:ind.liquidity === 'Very high' || ind.liquidity === 'High' ? 'pos' : 'flat', meaning:'Placeholder meaning', learn:'Liquidity'}
+      ]}
+    ];
+
+    // Render indicator groups
+    var bookIcon='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>';
+    var chev='<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>';
+    var ITEMS=[];
+    function esc(t){ return String(t).replace(/"/g,'&quot;'); }
+    function ind(it){
+      var i=ITEMS.push(it)-1;
+      return '<div class="ind-row"><div class="ind-main"><button class="term" type="button" data-i="'+i+'">'+it.label+'</button>'+
+        '<span class="ind-value '+it.cls+'">'+it.value+'</span></div>'+
+        '<div class="ind-meaning">'+it.meaning+'</div>'+
+        '<button class="learn-link" type="button" data-i="'+i+'">'+bookIcon+'Learn: '+it.learn+'</button></div>';
+    }
+    var list=document.getElementById('groupList');
+    groups.forEach(function(g,gi){
+      var prim=g.items.filter(function(x){return x.primary;}), rest=g.items.filter(function(x){return !x.primary;});
+      var card=document.createElement('section'); card.className='card group-card';
+      var h='<div class="section-head"><h2>'+g.title+'</h2><span class="step">'+(gi+1)+' / '+groups.length+'</span></div>'+
+        '<p class="section-sub">'+g.sub+'</p><div>'+prim.map(ind).join('')+'</div>';
+      if(rest.length){
+        h+='<div class="more-wrap"><div>'+rest.map(ind).join('')+'</div></div>'+
+          '<button class="see-all-btn" type="button"><span class="lbl">See all '+g.items.length+' indicators</span>'+chev+'</button>';
+      }
+      card.innerHTML=h; list.appendChild(card);
+      var btn=card.querySelector('.see-all-btn');
+      if(btn) btn.addEventListener('click',function(){
+        var open=card.classList.toggle('expanded'); card.querySelector('.more-wrap').classList.toggle('open',open);
+        btn.querySelector('.lbl').textContent=open?'Show less':'See all '+g.items.length+' indicators';
+      });
+    });
+  }  // end buildIndicatorGroups
 
   // ---------- Glossary: plain words first, then how it's calculated ----------
   var GL={
