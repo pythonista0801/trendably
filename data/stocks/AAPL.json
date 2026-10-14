@@ -1,20 +1,12 @@
 {
-  "asOf": "2026-10-14T14:08:08.403514",
-  "sym": "AAPL",
+  "ticker": "AAPL",
   "name": "Apple Inc.",
   "sector": "Information Technology",
-  "industry": "Information Technology \u203a Technology Hardware, Storage & Peripherals",
+  "sub_industry": "Technology Hardware, Storage & Peripherals",
+  "breadcrumb": "Information Technology \u203a Technology Hardware, Storage & Peripherals",
   "price": 342.96,
   "change": 1.69,
   "move": 0.5,
-  "score": {
-    "composite": null,
-    "momentum": null,
-    "risk": null,
-    "valuation": null,
-    "fundamentals": null,
-    "note": "Stage 1: scores pending full S&P 500 run for percentile ranks"
-  },
   "indicators": {
     "ret1m": 3.4,
     "ret3m": 3.1,
@@ -37,7 +29,7 @@
     "sharpe": 1.48,
     "pe": 39.3,
     "fpe": 35.8,
-    "peVsSector": null,
+    "peVsSector": 90.9,
     "evEbitda": 29.8,
     "ps": 10.7,
     "pb": 46.6,
@@ -52,6 +44,40 @@
     "atr14": 6.58,
     "liquidity": "Very high"
   },
-  "about": null,
-  "news": []
+  "score": {
+    "composite": 71,
+    "momentum": 90,
+    "risk": 82,
+    "valuation": 28,
+    "fundamentals": 73,
+    "label": "Strong composite score",
+    "tags": {
+      "momentum": "Strong uptrend",
+      "risk": "Low volatility",
+      "valuation": "Rich vs. sector",
+      "fundamentals": "Robust growth"
+    }
+  },
+  "summary": "Shows strong price momentum but faces challenges with rich valuation.",
+  "meanings": {
+    "ret6m": "Strong 6-month gain, well ahead of typical market moves.",
+    "ret1y": "Exceptional 1-year return, among the market's strongest performers.",
+    "fromHigh": "Trading near its 52-week high, showing strong momentum.",
+    "rsi14": "Neutral RSI reading, no extreme buying or selling pressure.",
+    "aboveMAs": "Above all three moving averages \u2014 confirmed uptrend.",
+    "macd": "MACD positive and rising \u2014 strong bullish momentum.",
+    "vol": "Moderate volatility, roughly in line with the market.",
+    "beta": "Below-market beta \u2014 less volatile than the overall index.",
+    "mdd1y": "Mild 1-year drawdown \u2014 relatively stable price path.",
+    "sharpe": "Good risk-adjusted return \u2014 returns have compensated for risk taken.",
+    "pe": "High P/E ratio \u2014 priced for strong growth, high expectations built in.",
+    "peVsSector": "Trading at a significant premium to its sector peers.",
+    "revGrowth": "Strong revenue growth, expanding the top line.",
+    "epsGrowth": "Strong earnings growth, bottom line improving.",
+    "margin": "Strong profit margin, well above most industries.",
+    "roe": "Excellent return on equity, highly efficient use of capital.",
+    "de": "Low leverage \u2014 conservative balance sheet.",
+    "liquidity": "Extremely liquid \u2014 tight spreads, easy to trade in size."
+  },
+  "asOf": "2026-10-14T15:07:00.008809"
 }

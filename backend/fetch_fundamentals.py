@@ -40,6 +40,8 @@ def fetch_fundamental(ticker: str) -> dict:
             # Valuation
             'trailingPE': info.get('trailingPE'),
             'forwardPE': info.get('forwardPE'),
+            'forwardEps': info.get('forwardEps'),
+            'currentPrice': info.get('currentPrice'),
             'enterpriseToEbitda': info.get('enterpriseToEbitda'),
             'priceToSalesTrailing12Months': info.get('priceToSalesTrailing12Months'),
             'priceToBook': info.get('priceToBook'),
@@ -74,39 +76,68 @@ def fetch_fundamental(ticker: str) -> dict:
         }
 
 
-def fetch_all_fundamentals(tickers: list[str], delay: float = 0.5) -> dict:
+def fetch_all_fundamentals(tickers: list[str], delay: float = 0.5, retry_failures: bool = True) -> tuple[dict, list]:
     """
     Fetch fundamentals for a list of tickers.
 
     Args:
         tickers: List of ticker symbols
         delay: Seconds to wait between requests (avoid rate limiting)
+        retry_failures: Retry failed requests once
 
     Returns:
-        Dict mapping ticker -> fundamental data
+        Tuple of (fundamentals dict, list of failed tickers)
     """
     fundamentals = {}
+    failed = []
     total = len(tickers)
 
     print(f"Fetching fundamentals for {total} stocks...")
-    print(f"(Rate limit: {delay}s between requests)")
+    print(f"(Rate limit: {delay}s between requests)\n")
 
     for i, ticker in enumerate(tickers, 1):
         print(f"[{i}/{total}] {ticker}...", end=' ', flush=True)
 
         fund = fetch_fundamental(ticker)
-        fundamentals[ticker] = fund
 
         if 'error' in fund:
-            print(f"✗ {fund['error']}")
+            print(f"FAIL ({fund['error'][:50]}...)")
+            failed.append(ticker)
         else:
-            print("✓")
+            print("OK")
+            fundamentals[ticker] = fund
 
         # Rate limiting
         if i < total:
             time.sleep(delay)
 
-    return fundamentals
+    # Retry failures once
+    if retry_failures and failed:
+        print(f"\n{'='*70}")
+        print(f"Retrying {len(failed)} failed stocks...\n")
+
+        retry_success = []
+        retry_failed = []
+
+        for i, ticker in enumerate(failed, 1):
+            print(f"[{i}/{len(failed)}] {ticker} (retry)...", end=' ', flush=True)
+
+            fund = fetch_fundamental(ticker)
+
+            if 'error' in fund:
+                print(f"FAIL")
+                retry_failed.append(ticker)
+            else:
+                print("OK")
+                fundamentals[ticker] = fund
+                retry_success.append(ticker)
+
+            if i < len(failed):
+                time.sleep(delay)
+
+        failed = retry_failed
+
+    return fundamentals, failed
 
 
 def save_fundamentals(fundamentals: dict):
@@ -143,46 +174,67 @@ def load_fundamentals() -> dict:
 
 def main():
     parser = argparse.ArgumentParser(description='Fetch fundamental data from Yahoo Finance')
-    parser.add_argument('--stocks', nargs='+', help='Specific stocks to fetch (default: all in universe)')
+    parser.add_argument('--stocks', nargs='+', help='Specific stocks to fetch (default: all S&P 500)')
     parser.add_argument('--delay', type=float, default=0.5, help='Delay between requests (seconds)')
-    parser.add_argument('--update', action='store_true', help='Update existing cache (only fetch missing)')
+    parser.add_argument('--resume', action='store_true', help='Skip stocks already fetched today')
 
     args = parser.parse_args()
 
     # Determine which stocks to fetch
     if args.stocks:
         tickers = args.stocks
-        print(f"Fetching specific stocks: {', '.join(tickers)}")
+        print(f"Fetching specific stocks: {', '.join(tickers)}\n")
     else:
         universe = load_sp500()
         tickers = universe['ticker'].tolist()
-        print(f"Fetching all stocks from S&P 500 ({len(tickers)} total)")
+        print(f"Fetching all stocks from S&P 500 ({len(tickers)} total)\n")
 
-    # If updating, load existing cache and only fetch missing
-    if args.update:
-        existing = load_fundamentals()
-        tickers = [t for t in tickers if t not in existing]
-        print(f"Update mode: {len(tickers)} stocks need fetching")
+    # Resume mode: skip stocks already fetched today
+    existing = load_fundamentals()
+    if args.resume and existing:
+        today = datetime.now().date().isoformat()
+        already_fetched = []
+
+        for ticker in tickers[:]:
+            if ticker in existing:
+                fetched_date = existing[ticker].get('fetchedAt', '')[:10]  # YYYY-MM-DD
+                if fetched_date == today and 'error' not in existing[ticker]:
+                    already_fetched.append(ticker)
+                    tickers.remove(ticker)
+
+        if already_fetched:
+            print(f"Resume mode: Skipping {len(already_fetched)} stocks already fetched today")
+            print(f"Remaining: {len(tickers)} stocks to fetch\n")
 
         if not tickers:
-            print("All stocks already cached!")
+            print("All stocks already fetched today!")
             return
 
     # Fetch fundamentals
-    fundamentals = fetch_all_fundamentals(tickers, delay=args.delay)
+    fundamentals, failed = fetch_all_fundamentals(tickers, delay=args.delay)
 
-    # If updating, merge with existing cache
-    if args.update:
-        existing = load_fundamentals()
+    # Merge with existing cache
+    if existing:
         existing.update(fundamentals)
         fundamentals = existing
 
     # Save to cache
     save_fundamentals(fundamentals)
 
-    # Summary
-    errors = sum(1 for f in fundamentals.values() if 'error' in f)
-    print(f"\nSummary: {len(fundamentals)} stocks, {errors} errors")
+    # Print summary
+    print(f"\n{'='*70}")
+    print(f"SUMMARY")
+    print(f"{'='*70}")
+    print(f"Succeeded: {len(fundamentals) - len(failed)} stocks")
+    print(f"Failed:    {len(failed)} stocks")
+    print(f"Total cached: {len(fundamentals)} stocks")
+
+    if failed:
+        print(f"\nFailed tickers:")
+        for ticker in sorted(failed):
+            print(f"  - {ticker}")
+    else:
+        print(f"\nAll stocks fetched successfully!")
 
 
 if __name__ == '__main__':

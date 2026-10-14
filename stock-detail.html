@@ -331,7 +331,7 @@
 
   <div id="groupList"></div>
 
-  <p class="caveat" style="text-align:center;padding:4px 10px 0;">All figures are illustrative sample data. This page presents historical and calculated indicators for information only — it is analysis, not a recommendation to buy or sell.</p>
+  <p class="caveat" style="text-align:center;padding:4px 10px 0;">This page presents historical and calculated indicators for information only — it is analysis, not a recommendation to buy or sell.</p>
 </div>
 
 <div class="gl-scrim" id="glScrim"></div>
@@ -372,21 +372,26 @@
     })
     .catch(function(error) {
       console.error('Failed to load stock data:', error);
-      document.getElementById('scoreN').textContent = '—';
-      document.getElementById('scoreTag').textContent = 'Data unavailable';
+      // Show "No data for <SYM>" message
+      document.querySelector('.wrap').innerHTML =
+        '<div class="card" style="text-align:center;padding:60px 20px;">' +
+        '<h2 style="color:var(--text2);margin-bottom:12px;">No data for ' + SYM + '</h2>' +
+        '<p style="color:var(--text3);">This stock may have been recently listed or is not in the S&P 500.</p>' +
+        '<a href="market-weather.html" style="display:inline-block;margin-top:24px;color:var(--blue);">← Back to Market Weather</a>' +
+        '</div>';
     });
 
   function initPage() {
     // Update page title and header
-    document.title = stockData.sym + ' · Stock Detail · Trendably';
-    document.querySelector('.stock-id .tk').textContent = stockData.sym;
+    document.title = stockData.ticker + ' · Stock Detail · Trendably';
+    document.querySelector('.stock-id .tk').textContent = stockData.ticker;
     document.querySelector('.stock-id .nm').textContent = stockData.name;
 
-    // Update breadcrumb (sector › industry)
+    // Update breadcrumb
     var crumbs = document.querySelector('.crumbs');
     crumbs.innerHTML = '<a href="market-weather.html">Market Weather</a><span>›</span>' +
       '<a href="sector-technology.html">' + stockData.sector + '</a><span>›</span>' +
-      '<span>' + stockData.sym + '</span>';
+      '<span>' + stockData.ticker + '</span>';
 
     // Update price in header
     var priceDisplay = stockData.change >= 0 ? '+' + stockData.change : stockData.change;
@@ -396,48 +401,31 @@
       '<div class="price-row"><div class="px">$' + stockData.price + '</div>' +
       '<div class="chg ' + priceClass + '">' + priceDisplay + ' (' + moveDisplay + ')</div></div>');
 
-    // Sub-scores (Stage 1: show sample labels)
-    if (stockData.score.composite !== null) {
-      var scoreN = stockData.score.composite;
-      subscores = [
-        {label:'Momentum',     value:stockData.score.momentum,     band:getBand(stockData.score.momentum),     tag:getScoreTag('momentum', stockData.score.momentum),     g:'momentum'},
-        {label:'Risk',         value:stockData.score.risk,         band:getBand(stockData.score.risk),         tag:getScoreTag('risk', stockData.score.risk),         g:'risk'},
-        {label:'Valuation',    value:stockData.score.valuation,    band:getBand(stockData.score.valuation),    tag:getScoreTag('valuation', stockData.score.valuation),    g:'valuation'},
-        {label:'Fundamentals', value:stockData.score.fundamentals, band:getBand(stockData.score.fundamentals), tag:getScoreTag('fundamentals', stockData.score.fundamentals), g:'fundamentals'}
-      ];
-    } else {
-      // Stage 1: scores pending
-      scoreN = '—';
-      subscores = [
-        {label:'Momentum',     value:'—', band:'mid', tag:'Sample', g:'momentum'},
-        {label:'Risk',         value:'—', band:'mid', tag:'Sample', g:'risk'},
-        {label:'Valuation',    value:'—', band:'mid', tag:'Sample', g:'valuation'},
-        {label:'Fundamentals', value:'—', band:'mid', tag:'Sample', g:'fundamentals'}
-      ];
+    // Display asOf timestamp
+    if (stockData.asOf) {
+      var asOfDate = new Date(stockData.asOf);
+      var dateStr = asOfDate.toLocaleDateString() + ' ' + asOfDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      document.querySelector('.card-header').insertAdjacentHTML('beforeend',
+        '<div style="font-size:11px;color:var(--text4);margin-top:8px;">As of ' + dateStr + '</div>');
     }
 
+    // Sub-scores from JSON (use tags from backend)
+    subscores = [
+      {label:'Momentum',     value:stockData.score.momentum || '—',     band:getBand(stockData.score.momentum),     tag:stockData.score.tags.momentum,     g:'momentum'},
+      {label:'Risk',         value:stockData.score.risk || '—',         band:getBand(stockData.score.risk),         tag:stockData.score.tags.risk,         g:'risk'},
+      {label:'Valuation',    value:stockData.score.valuation || '—',    band:getBand(stockData.score.valuation),    tag:stockData.score.tags.valuation,    g:'valuation'},
+      {label:'Fundamentals', value:stockData.score.fundamentals || '—', band:getBand(stockData.score.fundamentals), tag:stockData.score.tags.fundamentals, g:'fundamentals'}
+    ];
+
+    // Composite score and label from JSON
     var scoreN = stockData.score.composite || '—';
     document.getElementById('scoreN').textContent = scoreN;
-    document.getElementById('scoreTag').textContent = scoreN === '—' ? 'Scores pending' :
-      (scoreN >= 75 ? 'Strong composite score' : scoreN >= 60 ? 'Solid composite score' :
-       scoreN >= 45 ? 'Mixed composite score' : 'Weak composite score');
+    document.getElementById('scoreTag').textContent = stockData.score.label;
 
-    // Helper functions for scores
+    // Helper function for score bands
     function getBand(score) {
       if (score === null) return 'mid';
       return score >= 70 ? 'good' : score >= 40 ? 'mid' : 'bad';
-    }
-
-    function getScoreTag(type, score) {
-      if (score === null) return 'Sample';
-      var band = getBand(score);
-      var tags = {
-        momentum: {good: 'Strong uptrend', mid: 'Mixed momentum', bad: 'Weak momentum'},
-        risk: {good: 'Low volatility', mid: 'Moderate volatility', bad: 'High volatility'},
-        valuation: {good: 'Attractive', mid: 'Fairly valued', bad: 'Rich vs. sector'},
-        fundamentals: {good: 'Robust growth', mid: 'Steady', bad: 'Weak fundamentals'}
-      };
-      return tags[type][band];
     }
 
     // Render subscores
@@ -475,50 +463,51 @@
       return val > 0 ? 'pos' : val < 0 ? 'neg' : 'flat';
     }
 
-    // Build groups array with real data
+    // Build groups array with real data + meanings from JSON
+    var m = stockData.meanings;  // Meanings from backend
     var groups = [
       {title:'Price and performance', sub:'How the stock has actually moved, over several windows.', items:[
-        {label:'6-month return', value:fmtPct(ind.ret6m), cls:cls(ind.ret6m), meaning:'Placeholder meaning', learn:'Total return', primary:true},
-        {label:'1-year return', value:fmtPct(ind.ret1y), cls:cls(ind.ret1y), meaning:'Placeholder meaning', learn:'Total return', primary:true},
-        {label:'Distance from 52-week high', value:fmtPct(ind.fromHigh), cls:'flat', meaning:'Placeholder meaning', learn:'52-week high and low', primary:true},
-        {label:'1-month return', value:fmtPct(ind.ret1m), cls:cls(ind.ret1m), meaning:'Placeholder meaning', learn:'Total return'},
-        {label:'3-month return', value:fmtPct(ind.ret3m), cls:cls(ind.ret3m), meaning:'Placeholder meaning', learn:'Total return'},
-        {label:'52-week high / low', value:(ind.high52 ? '$'+ind.high52 : '—') + ' / ' + (ind.low52 ? '$'+ind.low52 : '—'), cls:'flat', meaning:'Placeholder meaning', learn:'52-week high and low'}
+        {label:'6-month return', value:fmtPct(ind.ret6m), cls:cls(ind.ret6m), meaning:m.ret6m, learn:'Total return', primary:true},
+        {label:'1-year return', value:fmtPct(ind.ret1y), cls:cls(ind.ret1y), meaning:m.ret1y, learn:'Total return', primary:true},
+        {label:'Distance from 52-week high', value:fmtPct(ind.fromHigh), cls:'flat', meaning:m.fromHigh, learn:'52-week high and low', primary:true},
+        {label:'1-month return', value:fmtPct(ind.ret1m), cls:cls(ind.ret1m), meaning:m.ret6m, learn:'Total return'},
+        {label:'3-month return', value:fmtPct(ind.ret3m), cls:cls(ind.ret3m), meaning:m.ret6m, learn:'Total return'},
+        {label:'52-week high / low', value:(ind.high52 ? '$'+ind.high52 : '—') + ' / ' + (ind.low52 ? '$'+ind.low52 : '—'), cls:'flat', meaning:m.fromHigh, learn:'52-week high and low'}
       ]},
       {title:'Momentum and trend', sub:'Whether the stock is currently trending, and how strongly.', items:[
-        {label:'RSI (14-day)', value:fmt(ind.rsi14), cls:'flat', meaning:'Placeholder meaning', learn:'RSI', g:'rsi', primary:true},
-        {label:'Price vs. moving averages', value:ind.aboveMAs === 3 ? 'Above all 3' : ind.aboveMAs === 2 ? 'Above 2 of 3' : ind.aboveMAs === 1 ? 'Above 1 of 3' : 'Below all 3', cls:ind.aboveMAs >= 2 ? 'pos' : 'neg', meaning:'Placeholder meaning', learn:'Moving averages', primary:true},
-        {label:'Momentum score', value:stockData.score.momentum ? stockData.score.momentum + ' / 100' : 'Pending', cls:stockData.score.momentum ? (stockData.score.momentum >= 70 ? 'pos' : 'flat') : 'flat', meaning:'Placeholder meaning', learn:'Momentum score', g:'momentum', primary:true},
-        {label:'20 / 50 / 200-day averages', value:(ind.sma20 ? '$'+ind.sma20 : '—') + ' / ' + (ind.sma50 ? '$'+ind.sma50 : '—') + ' / ' + (ind.sma200 ? '$'+ind.sma200 : '—'), cls:'flat', meaning:'Placeholder meaning', learn:'Moving averages'},
-        {label:'MACD', value:ind.macd !== null ? (ind.macd >= 0 ? '+' : '') + ind.macd + (ind.macdRising !== null ? (ind.macdRising ? ', rising' : ', falling') : '') : '—', cls:ind.macd > 0 ? 'pos' : ind.macd < 0 ? 'neg' : 'flat', meaning:'Placeholder meaning', learn:'MACD'}
+        {label:'RSI (14-day)', value:fmt(ind.rsi14), cls:'flat', meaning:m.rsi14, learn:'RSI', g:'rsi', primary:true},
+        {label:'Price vs. moving averages', value:ind.aboveMAs === 3 ? 'Above all 3' : ind.aboveMAs === 2 ? 'Above 2 of 3' : ind.aboveMAs === 1 ? 'Above 1 of 3' : 'Below all 3', cls:ind.aboveMAs >= 2 ? 'pos' : 'neg', meaning:m.aboveMAs, learn:'Moving averages', primary:true},
+        {label:'Momentum score', value:stockData.score.momentum ? stockData.score.momentum + ' / 100' : '—', cls:stockData.score.momentum ? (stockData.score.momentum >= 70 ? 'pos' : 'flat') : 'flat', meaning:stockData.score.tags.momentum, learn:'Momentum score', g:'momentum', primary:true},
+        {label:'20 / 50 / 200-day averages', value:(ind.sma20 ? '$'+ind.sma20 : '—') + ' / ' + (ind.sma50 ? '$'+ind.sma50 : '—') + ' / ' + (ind.sma200 ? '$'+ind.sma200 : '—'), cls:'flat', meaning:m.aboveMAs, learn:'Moving averages'},
+        {label:'MACD', value:ind.macd !== null ? (ind.macd >= 0 ? '+' : '') + ind.macd + (ind.macdRising !== null ? (ind.macdRising ? ', rising' : ', falling') : '') : '—', cls:ind.macd > 0 ? 'pos' : ind.macd < 0 ? 'neg' : 'flat', meaning:m.macd, learn:'MACD'}
       ]},
       {title:'Risk and volatility', sub:'How bumpy the ride has been, historically.', items:[
-        {label:'Annualised volatility', value:ind.vol !== null ? ind.vol + '%' : '—', cls:'flat', meaning:'Placeholder meaning', learn:'Volatility', g:'volatility', primary:true},
-        {label:'Beta', value:fmt(ind.beta), cls:'flat', meaning:'Placeholder meaning', learn:'Beta', g:'beta', primary:true},
-        {label:'Max drawdown (1 year)', value:ind.mdd1y !== null ? ind.mdd1y + '%' : '—', cls:'flat', meaning:'Placeholder meaning', learn:'Max drawdown', g:'drawdown', primary:true},
-        {label:'Downside volatility', value:ind.downVol !== null ? ind.downVol + '%' : '—', cls:'flat', meaning:'Placeholder meaning', learn:'Downside volatility'},
-        {label:'Sharpe ratio', value:fmt(ind.sharpe), cls:ind.sharpe > 1 ? 'pos' : 'flat', meaning:'Placeholder meaning', learn:'Sharpe ratio'}
+        {label:'Annualised volatility', value:ind.vol !== null ? ind.vol + '%' : '—', cls:'flat', meaning:m.vol, learn:'Volatility', g:'volatility', primary:true},
+        {label:'Beta', value:fmt(ind.beta), cls:'flat', meaning:m.beta, learn:'Beta', g:'beta', primary:true},
+        {label:'Max drawdown (1 year)', value:ind.mdd1y !== null ? ind.mdd1y + '%' : '—', cls:'flat', meaning:m.mdd1y, learn:'Max drawdown', g:'drawdown', primary:true},
+        {label:'Downside volatility', value:ind.downVol !== null ? ind.downVol + '%' : '—', cls:'flat', meaning:m.vol, learn:'Downside volatility'},
+        {label:'Sharpe ratio', value:fmt(ind.sharpe), cls:ind.sharpe > 1 ? 'pos' : 'flat', meaning:m.sharpe, learn:'Sharpe ratio'}
       ]},
       {title:'Valuation', sub:'What the market is currently paying for this stock.', items:[
-        {label:'P/E (trailing / forward)', value:(ind.pe || '—') + ' / ' + (ind.fpe || '—'), cls:'flat', meaning:'Placeholder meaning', learn:'P/E ratio', g:'pe', primary:true},
-        {label:'vs. sector median P/E', value:ind.peVsSector !== null ? fmtPct(ind.peVsSector) : '—', cls:'flat', meaning:'Placeholder meaning', learn:'Sector-relative valuation', primary:true},
-        {label:'EV/EBITDA', value:fmt(ind.evEbitda), cls:'flat', meaning:'Placeholder meaning', learn:'EV/EBITDA', primary:true},
-        {label:'Price-to-sales', value:fmt(ind.ps), cls:'flat', meaning:'Placeholder meaning', learn:'Price-to-sales'},
-        {label:'Price-to-book', value:fmt(ind.pb), cls:'flat', meaning:'Placeholder meaning', learn:'Price-to-book'}
+        {label:'P/E (trailing / forward)', value:(ind.pe || '—') + ' / ' + (ind.fpe || '—'), cls:'flat', meaning:m.pe, learn:'P/E ratio', g:'pe', primary:true},
+        {label:'vs. sector median P/E', value:ind.peVsSector !== null ? fmtPct(ind.peVsSector) : '—', cls:'flat', meaning:m.peVsSector, learn:'Sector-relative valuation', primary:true},
+        {label:'EV/EBITDA', value:fmt(ind.evEbitda), cls:'flat', meaning:m.pe, learn:'EV/EBITDA', primary:true},
+        {label:'Price-to-sales', value:fmt(ind.ps), cls:'flat', meaning:m.pe, learn:'Price-to-sales'},
+        {label:'Price-to-book', value:fmt(ind.pb), cls:'flat', meaning:m.pb, learn:'Price-to-book'}
       ]},
       {title:'Fundamentals', sub:'What the underlying business actually looks like.', items:[
-        {label:'Revenue growth (year on year)', value:fmtPct(ind.revGrowth), cls:cls(ind.revGrowth), meaning:'Placeholder meaning', learn:'Revenue growth', primary:true},
-        {label:'EPS growth (year on year)', value:fmtPct(ind.epsGrowth), cls:cls(ind.epsGrowth), meaning:'Placeholder meaning', learn:'EPS growth', primary:true},
-        {label:'Profit margin', value:ind.margin !== null ? ind.margin + '%' : '—', cls:ind.margin > 20 ? 'pos' : 'flat', meaning:'Placeholder meaning', learn:'Profit margin', primary:true},
-        {label:'Return on equity', value:ind.roe !== null ? ind.roe + '%' : '—', cls:ind.roe > 15 ? 'pos' : 'flat', meaning:'Placeholder meaning', learn:'Return on equity'},
-        {label:'Free cash flow (12 months)', value:ind.fcf !== null ? '$' + (ind.fcf / 1e9).toFixed(1) + 'B' : '—', cls:ind.fcf > 0 ? 'pos' : 'flat', meaning:'Placeholder meaning', learn:'Free cash flow'},
-        {label:'Debt-to-equity', value:fmt(ind.de), cls:ind.de !== null && ind.de < 0.5 ? 'pos' : 'flat', meaning:'Placeholder meaning', learn:'Debt-to-equity'}
+        {label:'Revenue growth (year on year)', value:fmtPct(ind.revGrowth), cls:cls(ind.revGrowth), meaning:m.revGrowth, learn:'Revenue growth', primary:true},
+        {label:'EPS growth (year on year)', value:fmtPct(ind.epsGrowth), cls:cls(ind.epsGrowth), meaning:m.epsGrowth, learn:'EPS growth', primary:true},
+        {label:'Profit margin', value:ind.margin !== null ? ind.margin + '%' : '—', cls:ind.margin > 20 ? 'pos' : 'flat', meaning:m.margin, learn:'Profit margin', primary:true},
+        {label:'Return on equity', value:ind.roe !== null ? ind.roe + '%' : '—', cls:ind.roe > 15 ? 'pos' : 'flat', meaning:m.roe, learn:'Return on equity'},
+        {label:'Free cash flow (12 months)', value:ind.fcf !== null ? '$' + (ind.fcf / 1e9).toFixed(1) + 'B' : '—', cls:ind.fcf > 0 ? 'pos' : 'flat', meaning:m.margin, learn:'Free cash flow'},
+        {label:'Debt-to-equity', value:fmt(ind.de), cls:ind.de !== null && ind.de < 0.5 ? 'pos' : 'flat', meaning:m.de, learn:'Debt-to-equity'}
       ]},
       {title:'Trading and activity', sub:'How liquid and actively traded the stock currently is.', items:[
-        {label:'Average daily volume (30 days)', value:ind.avgVol30 !== null ? (ind.avgVol30 / 1e6).toFixed(0) + 'M shares' : '—', cls:'flat', meaning:'Placeholder meaning', learn:'Volume', primary:true},
-        {label:'Today vs. average volume', value:fmtPct(ind.volVsAvg), cls:'flat', meaning:'Placeholder meaning', learn:'Volume', primary:true},
-        {label:'ATR (14-day)', value:ind.atr14 !== null ? '$' + ind.atr14 : '—', cls:'flat', meaning:'Placeholder meaning', learn:'Average true range'},
-        {label:'Liquidity', value:ind.liquidity || '—', cls:ind.liquidity === 'Very high' || ind.liquidity === 'High' ? 'pos' : 'flat', meaning:'Placeholder meaning', learn:'Liquidity'}
+        {label:'Average daily volume (30 days)', value:ind.avgVol30 !== null ? (ind.avgVol30 / 1e6).toFixed(0) + 'M shares' : '—', cls:'flat', meaning:m.liquidity, learn:'Volume', primary:true},
+        {label:'Today vs. average volume', value:fmtPct(ind.volVsAvg), cls:'flat', meaning:m.liquidity, learn:'Volume', primary:true},
+        {label:'ATR (14-day)', value:ind.atr14 !== null ? '$' + ind.atr14 : '—', cls:'flat', meaning:m.liquidity, learn:'Average true range'},
+        {label:'Liquidity', value:ind.liquidity || '—', cls:ind.liquidity === 'Very high' || ind.liquidity === 'High' ? 'pos' : 'flat', meaning:m.liquidity, learn:'Liquidity'}
       ]}
     ];
 
