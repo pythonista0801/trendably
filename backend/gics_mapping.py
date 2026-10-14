@@ -374,8 +374,11 @@ def get_breadcrumb(sector: str, sub_industry: str) -> str:
 
 def verify_coverage():
     """
-    Verify that all sub-industries in the current S&P 500 are mapped.
-    Prints any unmapped sub-industries.
+    Verify that all sub-industries in the current S&P 500 are mapped correctly.
+
+    Checks:
+    1. All sub-industries have a mapping
+    2. Each stock's mapped industry belongs to that stock's sector
     """
     from universe import load_sp500
 
@@ -389,7 +392,11 @@ def verify_coverage():
     print(f"Mapped sub-industries: {len(mapped_subs)}")
     print(f"Coverage: {len(all_subs - unmapped)}/{len(all_subs)} ({100 * len(all_subs - unmapped) / len(all_subs):.1f}%)")
 
+    errors = False
+
+    # Check 1: Missing sub-industries
     if unmapped:
+        errors = True
         print(f"\n⚠️  {len(unmapped)} unmapped sub-industries found:")
         for sector in sorted(sp500['gics_sector'].unique()):
             sector_subs = sp500[sp500['gics_sector'] == sector]['gics_sub_industry'].unique()
@@ -399,10 +406,50 @@ def verify_coverage():
                 for sub in sorted(sector_unmapped):
                     count = len(sp500[sp500['gics_sub_industry'] == sub])
                     print(f"    - {sub} ({count} stocks)")
-        return False
     else:
         print("\n✓ All sub-industries are mapped!")
-        return True
+
+    # Check 2: Validate that industries belong to the correct sector
+    # Build sector → industries mapping from actual S&P 500 data
+    sector_industries = {}
+    for _, row in sp500.iterrows():
+        sector = row['gics_sector']
+        sub = row['gics_sub_industry']
+        industry = get_industry(sub)
+
+        if sector not in sector_industries:
+            sector_industries[sector] = set()
+        sector_industries[sector].add(industry)
+
+    # Now check for cross-sector industries (industries that appear in multiple sectors)
+    print("\n" + "="*70)
+    print("Checking that industries don't cross sector boundaries...")
+
+    all_industries = {}
+    for sector, industries in sector_industries.items():
+        for industry in industries:
+            if industry not in all_industries:
+                all_industries[industry] = []
+            all_industries[industry].append(sector)
+
+    cross_sector = {ind: sectors for ind, sectors in all_industries.items() if len(sectors) > 1}
+
+    if cross_sector:
+        errors = True
+        print(f"\n⚠️  {len(cross_sector)} industries appear in multiple sectors (likely wrong mappings):")
+        for industry, sectors in sorted(cross_sector.items()):
+            print(f"\n  '{industry}' appears in:")
+            for sector in sectors:
+                # Find example stocks
+                examples = sp500[
+                    (sp500['gics_sector'] == sector) &
+                    (sp500['gics_sub_industry'].apply(get_industry) == industry)
+                ]['ticker'].head(3).tolist()
+                print(f"    - {sector}: {', '.join(examples)}")
+    else:
+        print("✓ All industries are correctly scoped to single sectors!")
+
+    return not errors
 
 
 # For universe.py - add industry to the DataFrame
@@ -425,4 +472,41 @@ def get_universe():
 
 if __name__ == '__main__':
     print("Verifying GICS sub-industry to industry mapping...\n")
+
+    # Spot-check key 2023 GICS changes
+    print("Spot-checking 2023 GICS reclassifications:")
+    from universe import load_sp500
+    sp500 = load_sp500()
+
+    test_cases = [
+        ('V', 'Financials', 'Transaction & Payment Processing Services'),  # Visa
+        ('MA', 'Financials', 'Transaction & Payment Processing Services'),  # Mastercard
+        ('PYPL', 'Financials', 'Transaction & Payment Processing Services'),  # PayPal
+        ('AMZN', 'Consumer Discretionary', 'Broadline Retail'),  # Amazon
+        ('WMT', 'Consumer Staples', 'Consumer Staples Merchandise Retail'),  # Walmart
+        ('COST', 'Consumer Staples', 'Consumer Staples Merchandise Retail'),  # Costco
+    ]
+
+    all_correct = True
+    for ticker, expected_sector, expected_sub in test_cases:
+        stock = sp500[sp500['ticker'] == ticker]
+        if stock.empty:
+            print(f"  {ticker}: Not in S&P 500")
+            continue
+
+        actual_sector = stock.iloc[0]['gics_sector']
+        actual_sub = stock.iloc[0]['gics_sub_industry']
+
+        if actual_sector == expected_sector and actual_sub == expected_sub:
+            print(f"  ✓ {ticker}: {expected_sector} › {expected_sub}")
+        else:
+            all_correct = False
+            print(f"  ✗ {ticker}: Expected {expected_sector} › {expected_sub}")
+            print(f"           Got {actual_sector} › {actual_sub}")
+
+    if all_correct:
+        print("\n✓ All spot checks passed!")
+    print("\n" + "="*70 + "\n")
+
+    # Run full coverage check
     verify_coverage()
